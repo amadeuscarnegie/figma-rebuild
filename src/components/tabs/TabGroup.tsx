@@ -63,7 +63,7 @@ export default function TabGroup({ activeTab, onTabChange }: TabGroupProps) {
   }
 
   return (
-    <div ref={containerRef} className="relative flex items-center gap-[4px] px-[8px] sm:px-[128px] py-[6px] overflow-x-auto" role="tablist" onKeyDown={handleKeyDown}>
+    <div ref={containerRef} className="relative flex items-center gap-[4px] px-[8px] sm:px-[128px] py-[6px] overflow-x-auto scrollbar-hide" role="tablist" onKeyDown={handleKeyDown}>
       {/* Sliding pill background */}
       <div
         className="absolute h-[36px] bg-blue-50 rounded-[18px] transition-all duration-300 ease-in-out"
