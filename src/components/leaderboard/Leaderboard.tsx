@@ -2,29 +2,8 @@ import { memo } from "react"
 import { Trophy } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { LEADERBOARD_DATA, LEADERBOARD_RESET_TIME, type LeaderboardEntry } from "@/data/constants"
-
-function StarBadge({ rank, variant }: { rank: number; variant: "gold" | "silver" }) {
-  const isGold = variant === "gold"
-  const fillColor = isGold ? "#F59E0B" : "#B8BCC4"
-  const textColor = isGold ? "#7C2D12" : "#374151"
-
-  return (
-    <div className="relative w-[36px] h-[36px] flex items-center justify-center shrink-0">
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path
-          d="M18 3L21.9 11.7L31.5 13.1L24.7 19.7L26.5 29.2L18 24.7L9.5 29.2L11.3 19.7L4.5 13.1L14.1 11.7L18 3Z"
-          fill={fillColor}
-        />
-      </svg>
-      <span
-        className="absolute inset-0 flex items-center justify-center font-extrabold text-[13px] leading-none"
-        style={{ color: textColor, paddingTop: "1px" }}
-      >
-        {rank}
-      </span>
-    </div>
-  )
-}
+import firstPlaceIcon from "@/assets/images/icons/1st place.svg"
+import secondPlaceIcon from "@/assets/images/icons/2nd place.svg"
 
 function Avatar({ name, color, size = 50 }: { name: string; color: string; size?: number }) {
   const initial = name.charAt(0).toUpperCase()
@@ -53,7 +32,11 @@ function AwardZoneEntry({ entry }: { entry: LeaderboardEntry }) {
         isFirst && "border-b border-border"
       )}
     >
-      <StarBadge rank={entry.rank} variant={isFirst ? "gold" : "silver"} />
+      <img
+        src={isFirst ? firstPlaceIcon : secondPlaceIcon}
+        alt={`${entry.rank}${isFirst ? "st" : "nd"} place`}
+        className="w-[36px] h-[36px] shrink-0"
+      />
       <Avatar name={entry.name} color={entry.avatarColor} size={56} />
       <span className="font-bold text-[14px] text-text-primary flex-1 leading-normal">
         {entry.name}
@@ -134,9 +117,9 @@ export default memo(function Leaderboard() {
         {/* Award zone section */}
         <div className="relative border-[1.5px] border-[#fedfa7] rounded-[12px] bg-white">
           {/* Award zone badge - centered on top edge */}
-          <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#ecf7ff] rounded-full px-[12px] h-[28px] flex items-center gap-[6px] z-10">
-            <Trophy className="w-[14px] h-[14px] text-blue-600" />
-            <span className="text-[14px] font-semibold text-blue-600 leading-normal whitespace-nowrap">
+          <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#fef6e0] rounded-full px-[12px] h-[28px] flex items-center gap-[6px] z-10">
+            <Trophy className="w-[14px] h-[14px] text-[#b8860b]" />
+            <span className="text-[14px] font-semibold text-[#b8860b] leading-normal whitespace-nowrap">
               Award zone
             </span>
           </div>
