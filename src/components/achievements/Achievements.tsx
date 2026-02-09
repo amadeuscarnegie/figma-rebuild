@@ -20,7 +20,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
   return (
     <div
       className={cn(
-        "relative flex flex-col items-center rounded-[12px] border-[1.5px] p-[17px] pt-[17px] pb-[25px] transition-transform duration-200 ease-out cursor-pointer hover:scale-[1.03] hover:shadow-md",
+        "relative flex flex-col items-center rounded-[12px] border-[1.5px] p-[17px] pt-[17px] pb-[25px]",
         unlocked
           ? "border-[#fedfa7] bg-white"
           : "border-border bg-grey-50"
@@ -34,7 +34,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
           </div>
         ) : (
           <div className="w-[28px] h-[28px] rounded-full bg-grey-200 flex items-center justify-center">
-            <Lock className="w-[16px] h-[16px] text-grey-300" />
+            <Lock className="w-[16px] h-[16px] text-grey-500" />
           </div>
         )}
       </div>
@@ -46,7 +46,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
             "inline-flex items-center h-[24px] px-[12px] rounded-full font-bold text-[12px] leading-normal",
             unlocked
               ? "bg-card-blue-bg text-blue-600"
-              : "bg-grey-200 text-grey-300"
+              : "bg-grey-200 text-grey-500"
           )}
         >
           {xp}
@@ -59,8 +59,8 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
           src={AVATAR_MAP[avatarKey]}
           alt=""
           className={cn(
-            "w-full h-full object-cover transition-transform duration-300",
-            unlocked ? "hover:scale-110" : "opacity-50 grayscale-[40%]"
+            "w-full h-full object-cover",
+            !unlocked && "opacity-70"
           )}
         />
       </div>
@@ -69,7 +69,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
       <h3
         className={cn(
           "font-bold text-[16px] leading-normal text-center mb-[8px]",
-          unlocked ? "text-text-primary" : "text-grey-300"
+          unlocked ? "text-text-primary" : "text-grey-500"
         )}
       >
         {name}
@@ -79,20 +79,20 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
       <p
         className={cn(
           "font-normal text-[14px] leading-[1.3] text-center px-[8px] mb-[16px]",
-          unlocked ? "text-text-muted" : "text-grey-300"
+          unlocked ? "text-text-muted" : "text-grey-500"
         )}
       >
         {description}
       </p>
 
       {/* Progress bar - pushed to bottom */}
-      <div className="w-full mt-auto">
-        <div className={cn("h-[6px] rounded-full overflow-hidden", unlocked ? "bg-grey-100" : "bg-grey-200")}>
-          {unlocked && (
+      {unlocked && (
+        <div className="w-full mt-auto">
+          <div className="h-[6px] rounded-full overflow-hidden bg-grey-100">
             <div className="h-full w-full bg-success rounded-full" />
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

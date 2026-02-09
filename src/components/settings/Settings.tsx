@@ -1,33 +1,48 @@
 import { memo, useState, useCallback } from "react"
-import { Mail, Trophy, Sparkles, EyeOff, ChevronDown, CircleCheck } from "lucide-react"
+import { Mail, Trophy, Sparkles, EyeOff, Eye, ChevronDown, CircleCheck } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { USER } from "@/data/constants"
 
 function SettingsInput({
   label,
   value,
+  onChange,
   type = "text",
   className,
 }: {
   label: string
-  value?: string
+  value: string
+  onChange: (value: string) => void
   type?: "text" | "password"
   className?: string
 }) {
+  const [showPassword, setShowPassword] = useState(false)
+  const inputType = type === "password" && showPassword ? "text" : type
+
   return (
     <div className={cn("flex flex-col gap-[6px]", className)}>
       <label className="font-semibold text-[14px] text-text-primary leading-normal">
         {label}
       </label>
-      <div className="flex items-center h-[48px] px-[16px] bg-white border border-grey-300 rounded-[4px] gap-[12px]">
+      <div className="flex items-center h-[48px] px-[16px] bg-white border border-grey-300 rounded-[4px] gap-[12px] focus-within:border-blue-600 transition-colors">
         <input
-          type={type}
-          defaultValue={value}
+          type={inputType}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
           className="flex-1 font-semibold text-[16px] text-text-primary leading-normal bg-transparent outline-none min-w-0"
-          readOnly
         />
         {type === "password" && (
-          <EyeOff className="w-[20px] h-[20px] text-text-muted shrink-0" />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="cursor-pointer shrink-0"
+          >
+            {showPassword ? (
+              <Eye className="w-[20px] h-[20px] text-text-muted" />
+            ) : (
+              <EyeOff className="w-[20px] h-[20px] text-text-muted" />
+            )}
+          </button>
         )}
       </div>
     </div>
@@ -37,10 +52,14 @@ function SettingsInput({
 function SettingsSelect({
   label,
   value,
+  onChange,
+  options,
   className,
 }: {
   label: string
   value: string
+  onChange: (value: string) => void
+  options: string[]
   className?: string
 }) {
   return (
@@ -48,11 +67,17 @@ function SettingsSelect({
       <label className="font-semibold text-[14px] text-text-primary leading-normal">
         {label}
       </label>
-      <div className="flex items-center h-[48px] px-[16px] bg-white border border-grey-300 rounded-[4px] gap-[12px] cursor-pointer">
-        <span className="flex-1 font-semibold text-[16px] text-text-primary leading-normal">
-          {value}
-        </span>
-        <ChevronDown className="w-[20px] h-[20px] text-text-muted shrink-0" />
+      <div className="relative flex items-center h-[48px] bg-white border border-grey-300 rounded-[4px] focus-within:border-blue-600 transition-colors">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full h-full px-[16px] pr-[40px] font-semibold text-[16px] text-text-primary leading-normal bg-transparent outline-none appearance-none cursor-pointer"
+        >
+          {options.map((opt) => (
+            <option key={opt} value={opt}>{opt}</option>
+          ))}
+        </select>
+        <ChevronDown className="absolute right-[16px] w-[20px] h-[20px] text-text-muted pointer-events-none" />
       </div>
     </div>
   )
@@ -114,12 +139,30 @@ function Divider() {
   return <div className="w-full h-px bg-border" />
 }
 
-function DisabledButton({ children }: { children: React.ReactNode }) {
+function ActionButton({
+  children,
+  disabled,
+  variant = "primary",
+  onClick,
+}: {
+  children: React.ReactNode
+  disabled: boolean
+  variant?: "primary" | "danger"
+  onClick?: () => void
+}) {
   return (
     <button
       type="button"
-      disabled
-      className="h-[48px] px-[20px] rounded-[10px] bg-grey-50 text-text-muted font-bold text-[16px] leading-normal shadow-[0px_4px_0px_0px_var(--color-grey-200)] cursor-not-allowed"
+      disabled={disabled}
+      onClick={onClick}
+      className={cn(
+        "h-[48px] px-[20px] rounded-[10px] font-bold text-[16px] leading-normal transition-all duration-100",
+        disabled
+          ? "bg-grey-50 text-text-muted shadow-[0px_4px_0px_0px_var(--color-grey-200)] cursor-not-allowed"
+          : variant === "danger"
+            ? "bg-destructive text-white shadow-[0px_4px_0px_0px_#991b1b] cursor-pointer active:translate-y-[4px] active:shadow-none"
+            : "bg-grey-600 text-white shadow-[0px_4px_0px_0px_var(--color-grey-900)] cursor-pointer active:translate-y-[4px] active:shadow-none hover:bg-grey-800"
+      )}
     >
       {children}
     </button>
@@ -143,8 +186,28 @@ function CardTitle({ children }: { children: React.ReactNode }) {
 }
 
 function ProfileDetailsCard() {
-  const [firstName] = useState(USER.name.split(" ")[0])
-  const [lastName] = useState(USER.name.split(" ").slice(1).join(" "))
+  const [firstName, setFirstName] = useState(USER.name.split(" ")[0])
+  const [lastName, setLastName] = useState(USER.name.split(" ").slice(1).join(" "))
+  const [email, setEmail] = useState<string>(USER.email)
+  const [role, setRole] = useState("Student")
+  const [year, setYear] = useState("11")
+  const [saved, setSaved] = useState(false)
+
+  const origFirstName = USER.name.split(" ")[0]
+  const origLastName = USER.name.split(" ").slice(1).join(" ")
+  const origEmail = USER.email
+
+  const hasChanges =
+    firstName !== origFirstName ||
+    lastName !== origLastName ||
+    email !== origEmail ||
+    role !== "Student" ||
+    year !== "11"
+
+  const handleSave = useCallback(() => {
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
+  }, [])
 
   return (
     <Card>
@@ -152,22 +215,29 @@ function ProfileDetailsCard() {
 
       <div className="flex flex-col gap-[16px]">
         <div className="flex flex-col sm:flex-row gap-[16px]">
-          <SettingsInput label="First name" value={firstName} className="flex-1" />
-          <SettingsInput label="Last name" value={lastName} className="flex-1" />
+          <SettingsInput label="First name" value={firstName} onChange={setFirstName} className="flex-1" />
+          <SettingsInput label="Last name" value={lastName} onChange={setLastName} className="flex-1" />
         </div>
 
-        <SettingsInput label="Email" value={USER.email} />
+        <SettingsInput label="Email" value={email} onChange={setEmail} />
 
         <div className="flex flex-col sm:flex-row gap-[16px]">
-          <SettingsSelect label="Role" value="Student" className="flex-1" />
-          <SettingsSelect label="Year" value="11" className="flex-1" />
+          <SettingsSelect label="Role" value={role} onChange={setRole} options={["Student", "Teacher", "Parent"]} className="flex-1" />
+          <SettingsSelect label="Year" value={year} onChange={setYear} options={["7", "8", "9", "10", "11", "12", "13"]} className="flex-1" />
         </div>
       </div>
 
       <Divider />
 
-      <div>
-        <DisabledButton>Save changes</DisabledButton>
+      <div className="flex items-center gap-[12px]">
+        <ActionButton disabled={!hasChanges} onClick={handleSave}>
+          Save changes
+        </ActionButton>
+        {saved && (
+          <span className="text-success font-semibold text-[14px] leading-normal">
+            Changes saved!
+          </span>
+        )}
       </div>
     </Card>
   )
@@ -186,8 +256,6 @@ function PreferencesCard() {
     <Card>
       <CardTitle>Preferences</CardTitle>
 
-      <Divider />
-
       <PreferenceRow
         icon={Mail}
         title="Email notifications"
@@ -195,8 +263,6 @@ function PreferencesCard() {
         enabled={emailNotifs}
         onToggle={toggleEmail}
       />
-
-      <Divider />
 
       <PreferenceRow
         icon={Trophy}
@@ -206,14 +272,12 @@ function PreferencesCard() {
         onToggle={toggleLeaderboards}
       />
 
-      <Divider />
-
       <PreferenceRow
         icon={Sparkles}
         title="AI marking"
         description="Allow AI to automatically grade your subjective answers."
         extra={
-          <p className="font-normal text-[14px] text-text-muted underline mt-[8px] cursor-pointer">
+          <p className="font-normal text-[14px] text-blue-600 underline mt-[8px] cursor-pointer">
             Learn more
           </p>
         }
@@ -225,23 +289,46 @@ function PreferencesCard() {
 }
 
 function ChangePasswordCard() {
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [saved, setSaved] = useState(false)
+
+  const isValidLength = newPassword.length >= 8 && newPassword.length <= 16
+  const passwordsMatch = newPassword === confirmPassword && newPassword.length > 0
+  const canSave = currentPassword.length > 0 && isValidLength && passwordsMatch
+
+  const handleSave = useCallback(() => {
+    setSaved(true)
+    setCurrentPassword("")
+    setNewPassword("")
+    setConfirmPassword("")
+    setTimeout(() => setSaved(false), 2000)
+  }, [])
+
+  const handleCancel = useCallback(() => {
+    setCurrentPassword("")
+    setNewPassword("")
+    setConfirmPassword("")
+  }, [])
+
+  const hasInput = currentPassword.length > 0 || newPassword.length > 0 || confirmPassword.length > 0
+
   return (
     <Card>
       <CardTitle>Change password</CardTitle>
 
       <div className="flex flex-col gap-[28px]">
-        <SettingsInput label="Current password" type="password" />
-
-        <Divider />
+        <SettingsInput label="Current password" type="password" value={currentPassword} onChange={setCurrentPassword} />
 
         <div className="flex flex-col gap-[16px]">
-          <SettingsInput label="New password" type="password" />
-          <SettingsInput label="Confirm new password" type="password" />
+          <SettingsInput label="New password" type="password" value={newPassword} onChange={setNewPassword} />
+          <SettingsInput label="Confirm new password" type="password" value={confirmPassword} onChange={setConfirmPassword} />
         </div>
 
         <div className="flex items-center gap-[8px]">
-          <CircleCheck className="w-[20px] h-[20px] text-text-muted shrink-0" />
-          <p className="font-semibold text-[14px] text-text-primary leading-normal">
+          <CircleCheck className={cn("w-[20px] h-[20px] shrink-0", isValidLength ? "text-success" : "text-text-muted")} />
+          <p className={cn("font-semibold text-[14px] leading-normal", isValidLength ? "text-success" : "text-text-primary")}>
             Password must be 8-16 characters long
           </p>
         </div>
@@ -249,15 +336,34 @@ function ChangePasswordCard() {
 
       <Divider />
 
-      <div className="flex gap-[8px]">
-        <DisabledButton>Save changes</DisabledButton>
-        <DisabledButton>Cancel</DisabledButton>
+      <div className="flex items-center gap-[8px]">
+        <ActionButton disabled={!canSave} onClick={handleSave}>
+          Save changes
+        </ActionButton>
+        <button
+          type="button"
+          disabled={!hasInput}
+          onClick={handleCancel}
+          className={cn(
+            "font-bold text-[16px] leading-normal px-[12px] transition-colors",
+            hasInput ? "text-text-primary cursor-pointer hover:text-grey-800" : "text-text-muted cursor-not-allowed"
+          )}
+        >
+          Cancel
+        </button>
+        {saved && (
+          <span className="text-success font-semibold text-[14px] leading-normal">
+            Password changed!
+          </span>
+        )}
       </div>
     </Card>
   )
 }
 
 function DeleteAccountCard() {
+  const [password, setPassword] = useState("")
+
   return (
     <Card>
       <div className="flex flex-col gap-[8px]">
@@ -267,12 +373,14 @@ function DeleteAccountCard() {
         </p>
       </div>
 
-      <SettingsInput label="Current password" type="password" />
+      <SettingsInput label="Current password" type="password" value={password} onChange={setPassword} />
 
       <Divider />
 
       <div>
-        <DisabledButton>Delete account</DisabledButton>
+        <ActionButton disabled={password.length === 0} variant="danger">
+          Delete account
+        </ActionButton>
       </div>
     </Card>
   )
