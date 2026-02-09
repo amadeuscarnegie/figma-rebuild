@@ -1,73 +1,56 @@
-# React + TypeScript + Vite
+# Cognito — Account Page
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A pixel-perfect rebuild of the Cognito education platform's account page, originally designed in Figma.
 
-Currently, two official plugins are available:
+**Live demo:** [figma-rebuild-eight.vercel.app](https://figma-rebuild-eight.vercel.app)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
 
-## React Compiler
+- **React 19** + **TypeScript 5.9** + **Vite 7**
+- **Tailwind CSS v4** with a custom design token system
+- **Lucide React** for icons
+- **Vitest** + **Testing Library** for unit tests
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Getting Started
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev       # Start dev server at localhost:5173
+npm run build     # Type-check + production build
+npm run test      # Run unit tests
+npm run lint      # Run ESLint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Architecture
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+├── pages/           # Page-level layout (AccountPage)
+├── components/
+│   ├── chart/       # Custom SVG line chart with bezier curves
+│   ├── navbar/      # Top navigation with dropdowns and modals
+│   ├── profile/     # User profile header
+│   ├── stats/       # LevelCard + StatCard components
+│   ├── streak/      # Streak calendar with flame icons
+│   ├── tabs/        # Tab navigation with sliding indicator
+│   └── ui/          # Shared primitives (Modal)
+├── hooks/           # useClickOutside, useFocusTrap
+├── data/            # Centralized mock data constants
+├── lib/             # Utility functions (cn)
+├── assets/images/   # SVGs and PNGs from Figma
+└── globals.css      # Tailwind config + design tokens
+```
+
+## Design Decisions
+
+**Design tokens over hardcoded values.** All colors are defined as CSS custom properties in `globals.css` under `@theme inline` and used via Tailwind classes (e.g., `text-heading`, `bg-profile-bg`). Zero hardcoded hex values in any component.
+
+**Custom SVG chart.** The activity chart uses hand-rolled cubic bezier curves rather than a charting library — appropriate for a static visualization and keeps the bundle lean.
+
+**Shared Modal primitive.** A reusable `<Modal>` component handles backdrop, focus trapping, focus restoration, and close-on-Escape for all 4 modals in the app.
+
+**Performance-conscious rendering.** Components use `React.memo` to prevent unnecessary re-renders (e.g., Navbar and ProfileHeader don't re-render on tab changes). SVG path computations are memoized with `useMemo`. State is colocated — calendar navigation only re-renders the calendar, not sibling components.
+
+**Accessibility-first.** WAI-ARIA tabs pattern with roving tabindex and keyboard navigation. Focus trapping in modals with focus restoration on close. Proper `role="menu"`/`role="menuitem"` on dropdowns. Semantic HTML throughout.
+
+**Data separated from UI.** All mock data lives in `src/data/constants.ts`, making it trivial to swap in real API data later.

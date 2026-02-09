@@ -1,26 +1,29 @@
-import badgeIcon from "@/assets/images/real images/Notification Icon.svg"
+import badgeIcon from "@/assets/images/icons/Notification Icon.svg"
+import { LEVEL } from "@/data/constants"
+
+const progressPct = Math.round((LEVEL.xp / LEVEL.xpRequired) * 100)
 
 export default function LevelCard() {
   return (
-    <div className="bg-[#ecf7ff] border-[1.5px] border-[rgba(0,0,0,0.05)] rounded-[8px] w-full p-[24px] flex flex-col">
+    <div className="bg-card-blue-bg border-[1.5px] border-[rgba(0,0,0,0.05)] rounded-[8px] w-full p-[24px] flex flex-col">
       {/* Level info */}
       <div className="flex items-center gap-[12px] mb-[24px]">
         <img src={badgeIcon} alt="" className="w-[44px] h-[44px]" />
         <div className="flex flex-col">
-          <span className="font-bold text-[20px] text-[#0b3c61] leading-normal">Explorer</span>
-          <span className="text-[14px] text-[#667085] leading-normal">Level 2</span>
+          <span className="font-bold text-[20px] text-heading leading-normal">{LEVEL.title}</span>
+          <span className="text-[14px] text-text-muted leading-normal">Level {LEVEL.current}</span>
         </div>
       </div>
 
       {/* Progress bar */}
-      <div className="bg-[#d6eeff] rounded-[8px] p-[16px]">
+      <div className="bg-progress-bg rounded-[8px] p-[16px]">
         <div className="flex items-center gap-[12px]">
-          <span className="font-bold text-[14px] text-[#1378c4] whitespace-nowrap leading-normal">Lv. 3</span>
-          <div className="flex-1 h-[14px] bg-[#eaecf0] rounded-full relative overflow-hidden">
-            <div className="h-full w-[25%] bg-[#1890eb] rounded-full" />
+          <span className="font-bold text-[14px] text-blue-600 whitespace-nowrap leading-normal">Lv. {LEVEL.next}</span>
+          <div className="flex-1 h-[14px] bg-border rounded-full relative overflow-hidden" role="progressbar" aria-valuenow={LEVEL.xp} aria-valuemin={0} aria-valuemax={LEVEL.xpRequired} aria-label={`Level ${LEVEL.next} progress: ${LEVEL.xp} of ${LEVEL.xpRequired} XP`}>
+            <div className="h-full bg-progress-fill rounded-full" style={{ width: `${progressPct}%` }} />
             <div className="absolute top-[4px] left-[8px] w-[17px] h-[4px] bg-white/30 rounded-full" />
           </div>
-          <span className="font-semibold text-[12px] text-[#667085] whitespace-nowrap leading-normal">50 / 200 XP</span>
+          <span className="font-semibold text-[12px] text-text-muted whitespace-nowrap leading-normal">{LEVEL.xp} / {LEVEL.xpRequired} XP</span>
         </div>
       </div>
     </div>

@@ -32,20 +32,48 @@ export default function TabGroup({ activeTab, onTabChange }: TabGroupProps) {
     return () => window.removeEventListener("resize", updateIndicator)
   }, [updateIndicator])
 
+  function handleKeyDown(e: React.KeyboardEvent) {
+    const currentIndex = TABS.indexOf(activeTab)
+    let newIndex = -1
+
+    if (e.key === "ArrowRight") {
+      newIndex = (currentIndex + 1) % TABS.length
+    } else if (e.key === "ArrowLeft") {
+      newIndex = (currentIndex - 1 + TABS.length) % TABS.length
+    } else if (e.key === "Home") {
+      newIndex = 0
+    } else if (e.key === "End") {
+      newIndex = TABS.length - 1
+    }
+
+    if (newIndex >= 0) {
+      e.preventDefault()
+      onTabChange(TABS[newIndex])
+      const container = containerRef.current
+      if (container) {
+        const btn = container.querySelector<HTMLButtonElement>(`[data-tab="${TABS[newIndex]}"]`)
+        btn?.focus()
+      }
+    }
+  }
+
   return (
-    <div ref={containerRef} className="relative flex items-start border-b border-[#eaecf0] px-[24px] sm:px-[128px]" role="tablist">
+    <div ref={containerRef} className="relative flex items-start border-b border-border px-[8px] sm:px-[128px] overflow-x-auto" role="tablist" onKeyDown={handleKeyDown}>
       {TABS.map((tab) => (
         <button
           key={tab}
+          id={`tab-${tab}`}
           data-tab={tab}
           role="tab"
+          tabIndex={activeTab === tab ? 0 : -1}
           aria-selected={activeTab === tab}
+          aria-controls={`tabpanel-${tab}`}
           onClick={() => onTabChange(tab)}
           className={cn(
-            "flex items-center justify-center h-[44px] px-[24px] pb-[8px] font-semibold text-[16px] leading-normal cursor-pointer transition-colors duration-200",
+            "flex items-center justify-center h-[44px] px-[12px] sm:px-[24px] pb-[8px] font-semibold text-[14px] sm:text-[16px] leading-normal cursor-pointer transition-colors duration-200 whitespace-nowrap shrink-0",
             activeTab === tab
-              ? "text-[#105a92]"
-              : "text-[#667085] hover:text-[#344054]"
+              ? "text-blue-700"
+              : "text-text-muted hover:text-text-secondary"
           )}
         >
           {tab}
@@ -53,7 +81,7 @@ export default function TabGroup({ activeTab, onTabChange }: TabGroupProps) {
       ))}
       {/* Sliding indicator */}
       <div
-        className="absolute bottom-0 h-[3px] bg-[#1578c3] rounded-t-full transition-all duration-300 ease-in-out"
+        className="absolute bottom-0 h-[3px] bg-blue-600 rounded-t-full transition-all duration-300 ease-in-out"
         style={{ left: indicator.left, width: indicator.width }}
       />
     </div>
