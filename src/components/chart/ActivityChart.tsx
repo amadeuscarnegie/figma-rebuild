@@ -1,4 +1,4 @@
-import { memo, useState, useRef, useMemo, useCallback } from "react"
+import { memo, useState, useRef, useMemo, useCallback, useEffect } from "react"
 import { ChevronDown } from "lucide-react"
 import { useClickOutside } from "@/hooks/useClickOutside"
 import { TIME_PERIODS, CHART_DATA, type TimePeriod } from "@/data/constants"
@@ -8,11 +8,24 @@ const CHART_WIDTH = 684
 const CHART_HEIGHT = 184
 const PADDING_LEFT = 40
 const PADDING_RIGHT = 10
+const MOBILE_BREAKPOINT = 640
+const MOBILE_FONT_SIZE = 13
+const DESKTOP_FONT_SIZE = 11
 
 export default memo(function ActivityChart() {
   const [period, setPeriod] = useState<TimePeriod>("All time")
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+
+  const fontSize = isMobile ? MOBILE_FONT_SIZE : DESKTOP_FONT_SIZE
 
   useClickOutside(dropdownRef, () => setDropdownOpen(false))
 
@@ -51,7 +64,7 @@ export default memo(function ActivityChart() {
   }
 
   return (
-    <div className="bg-white border border-border rounded-[8px] w-full p-[24px]">
+    <div className="bg-white border border-border rounded-[8px] w-full p-[12px] sm:p-[24px]">
       {/* Header */}
       <div className="flex items-center justify-between mb-[32px]">
         <h3 className="font-bold text-[18px] text-text-primary leading-normal">Activity XP history</h3>
@@ -102,9 +115,9 @@ export default memo(function ActivityChart() {
                   x={30}
                   y={y + 4}
                   textAnchor="end"
-                  className="fill-text-muted text-[11px]"
+                  className="fill-text-muted"
                   fontFamily="Nunito"
-                  fontSize="11"
+                  fontSize={fontSize}
                 >
                   {label}
                 </text>
@@ -140,19 +153,23 @@ export default memo(function ActivityChart() {
           />
 
           {/* X-axis labels */}
-          {data.labels.map((label, i) => (
-            <text
-              key={i}
-              x={xScale(i)}
-              y={CHART_HEIGHT + 20}
-              textAnchor="middle"
-              className="fill-text-muted text-[11px]"
-              fontFamily="Nunito"
-              fontSize="11"
-            >
-              {label}
-            </text>
-          ))}
+          {data.labels.map((label, i) => {
+            const skipLabel = isMobile && data.labels.length > 7 && i % 2 !== 0
+            if (skipLabel) return null
+            return (
+              <text
+                key={i}
+                x={xScale(i)}
+                y={CHART_HEIGHT + 20}
+                textAnchor="middle"
+                className="fill-text-muted"
+                fontFamily="Nunito"
+                fontSize={fontSize}
+              >
+                {label}
+              </text>
+            )
+          })}
         </svg>
       </div>
     </div>
