@@ -61,7 +61,7 @@ function RegularEntry({ entry, isFirst, isLast }: { entry: LeaderboardEntry; isF
     <div
       className={cn(
         "flex items-center gap-[8px] sm:gap-[12px] px-[8px] sm:px-[16px] py-[6px]",
-        isFaded && "opacity-50",
+        isFaded && "opacity-70",
         isLast && "border-t border-grey-100 pt-[10px]",
         entry.isYou && "bg-[#edf7fe] rounded-[12px] opacity-100 py-[8px]"
       )}
