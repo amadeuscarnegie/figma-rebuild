@@ -9,7 +9,7 @@ const CHART_HEIGHT = 184
 const PADDING_LEFT = 40
 const PADDING_RIGHT = 10
 const MOBILE_BREAKPOINT = 640
-const MOBILE_FONT_SIZE = 13
+const MOBILE_FONT_SIZE = 15
 const DESKTOP_FONT_SIZE = 11
 
 export default memo(function ActivityChart() {
