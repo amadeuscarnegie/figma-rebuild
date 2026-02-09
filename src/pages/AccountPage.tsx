@@ -7,6 +7,7 @@ import LevelCard from "@/components/stats/LevelCard"
 import StatCard from "@/components/stats/StatCard"
 import ActivityChart from "@/components/chart/ActivityChart"
 import Leaderboard from "@/components/leaderboard/Leaderboard"
+import Settings from "@/components/settings/Settings"
 import { STATS } from "@/data/constants"
 
 function EmptyTabContent({ tab }: { tab: TabName }) {
@@ -65,6 +66,8 @@ export default function AccountPage() {
             </div>
           ) : activeTab === "Leaderboard" ? (
             <Leaderboard />
+          ) : activeTab === "Settings" ? (
+            <Settings />
           ) : (
             <EmptyTabContent tab={activeTab} />
           )}
