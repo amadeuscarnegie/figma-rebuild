@@ -21,15 +21,20 @@ export default function TabGroup({ activeTab, onTabChange }: TabGroupProps) {
     const containerRect = container.getBoundingClientRect()
     const buttonRect = activeButton.getBoundingClientRect()
     setIndicator({
-      left: buttonRect.left - containerRect.left,
+      left: buttonRect.left - containerRect.left + container.scrollLeft,
       width: buttonRect.width,
     })
   }, [activeTab])
 
   useEffect(() => {
     updateIndicator()
+    const container = containerRef.current
     window.addEventListener("resize", updateIndicator)
-    return () => window.removeEventListener("resize", updateIndicator)
+    container?.addEventListener("scroll", updateIndicator)
+    return () => {
+      window.removeEventListener("resize", updateIndicator)
+      container?.removeEventListener("scroll", updateIndicator)
+    }
   }, [updateIndicator])
 
   function handleKeyDown(e: React.KeyboardEvent) {
