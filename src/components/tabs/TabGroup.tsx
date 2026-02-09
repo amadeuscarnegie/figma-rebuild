@@ -58,34 +58,32 @@ export default function TabGroup({ activeTab, onTabChange }: TabGroupProps) {
   }
 
   return (
-    <div className="px-[8px] sm:px-[128px] py-[6px]">
-      <div ref={containerRef} className="relative inline-flex items-center bg-grey-100 rounded-[10px] p-[4px]" role="tablist" onKeyDown={handleKeyDown}>
-        {/* Sliding active indicator */}
-        <div
-          className="absolute h-[calc(100%-8px)] bg-white rounded-[8px] shadow-sm transition-all duration-300 ease-in-out"
-          style={{ left: indicator.left, width: indicator.width }}
-        />
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            id={`tab-${tab}`}
-            data-tab={tab}
-            role="tab"
-            tabIndex={activeTab === tab ? 0 : -1}
-            aria-selected={activeTab === tab}
-            aria-controls={`tabpanel-${tab}`}
-            onClick={() => onTabChange(tab)}
-            className={cn(
-              "relative z-10 flex items-center justify-center h-[36px] px-[16px] sm:px-[24px] font-semibold text-[14px] sm:text-[16px] leading-normal cursor-pointer transition-colors duration-200 whitespace-nowrap shrink-0 rounded-[8px]",
-              activeTab === tab
-                ? "text-blue-700"
-                : "text-text-muted hover:text-text-secondary"
-            )}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+    <div ref={containerRef} className="relative flex items-center gap-[4px] px-[8px] sm:px-[128px] py-[6px] overflow-x-auto" role="tablist" onKeyDown={handleKeyDown}>
+      {/* Sliding pill background */}
+      <div
+        className="absolute h-[36px] bg-blue-50 rounded-[18px] transition-all duration-300 ease-in-out"
+        style={{ left: indicator.left, width: indicator.width }}
+      />
+      {TABS.map((tab) => (
+        <button
+          key={tab}
+          id={`tab-${tab}`}
+          data-tab={tab}
+          role="tab"
+          tabIndex={activeTab === tab ? 0 : -1}
+          aria-selected={activeTab === tab}
+          aria-controls={`tabpanel-${tab}`}
+          onClick={() => onTabChange(tab)}
+          className={cn(
+            "relative z-10 flex items-center justify-center h-[36px] px-[16px] sm:px-[24px] font-semibold text-[14px] sm:text-[16px] leading-normal cursor-pointer transition-colors duration-200 whitespace-nowrap shrink-0 rounded-[18px]",
+            activeTab === tab
+              ? "text-blue-700"
+              : "text-text-muted hover:text-text-secondary hover:bg-grey-100"
+          )}
+        >
+          {tab}
+        </button>
+      ))}
     </div>
   )
 }
