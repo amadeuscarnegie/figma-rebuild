@@ -111,6 +111,7 @@ export default memo(function Navbar() {
         label="Search"
         align="top"
         className="w-[560px] p-[24px]"
+        showClose={false}
       >
         <div className="flex items-center gap-[12px] border border-grey-300 rounded-[8px] px-[14px] h-[48px]">
           <Search className="w-[20px] h-[20px] text-text-muted shrink-0" />
