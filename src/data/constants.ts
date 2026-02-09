@@ -112,6 +112,12 @@ export const ACHIEVEMENTS_DATA: Achievement[] = [
   { name: "Treasure Hunter", description: "Find a hidden easter egg in the dashboard", xp: "1000 XP", avatarKey: "scuba", unlocked: false },
   { name: "Speed Racer", description: "Complete a quiz in under 30 seconds", xp: "350 XP", avatarKey: "headphones", unlocked: false },
   { name: "Legend", description: "Reach level 50", xp: "5000 XP", avatarKey: "scuba", unlocked: false },
+  { name: "Perfect Week", description: "Complete at least one lesson every day for 7 days", xp: "600 XP", avatarKey: "villain", unlocked: false },
+  { name: "Revision Pro", description: "Revisit and complete 5 previously finished topics", xp: "250 XP", avatarKey: "sherlock", unlocked: true },
+  { name: "Subject Explorer", description: "Start a lesson in 4 different subjects", xp: "300 XP", avatarKey: "scuba", unlocked: false },
+  { name: "Helping Hand", description: "Answer 3 questions from other students in the forum", xp: "200 XP", avatarKey: "headphones", unlocked: false },
+  { name: "Marathon Learner", description: "Study for a total of 10 hours", xp: "750 XP", avatarKey: "villain", unlocked: false },
+  { name: "Top of the Class", description: "Finish 1st on the weekly leaderboard", xp: "1500 XP", avatarKey: "sherlock", unlocked: false },
 ]
 
 // ── Activity Chart ──────────────────────────────────────────────────────
