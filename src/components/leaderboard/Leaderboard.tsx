@@ -18,7 +18,7 @@ const AVATAR_MAP: Record<LeaderboardEntry["avatarKey"], string> = {
 
 function LeaderboardAvatar({ avatarKey, className }: { avatarKey: LeaderboardEntry["avatarKey"]; className?: string }) {
   return (
-    <div className={cn("rounded-full overflow-hidden bg-grey-100 shrink-0", className)}>
+    <div className={cn("rounded-full overflow-hidden shrink-0", className)}>
       <img
         src={AVATAR_MAP[avatarKey]}
         alt=""
