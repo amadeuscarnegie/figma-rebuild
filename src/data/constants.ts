@@ -48,6 +48,28 @@ export const STATS = [
   { value: "12,460", label: "Questions answered" },
 ] as const
 
+// ── Leaderboard ────────────────────────────────────────────────────────
+export interface LeaderboardEntry {
+  rank: number
+  name: string
+  xp: string
+  avatarColor: string
+  isYou?: boolean
+  isAwardZone?: boolean
+}
+
+export const LEADERBOARD_DATA: LeaderboardEntry[] = [
+  { rank: 1, name: "Calm Llama", xp: "1,370 XP", avatarColor: "#FFB347", isAwardZone: true },
+  { rank: 2, name: "Silly Goose", xp: "1,240 XP", avatarColor: "#87CEEB", isAwardZone: true },
+  { rank: 6, name: "Happy Heron", xp: "860 XP", avatarColor: "#98D8C8" },
+  { rank: 7, name: "Hairy Duck", xp: "860 XP", avatarColor: "#F7DC6F" },
+  { rank: 8, name: "Sleepy Wombat", xp: "750 XP", avatarColor: "#BB8FCE", isYou: true },
+  { rank: 9, name: "Sly Fox", xp: "720 XP", avatarColor: "#85C1E9" },
+  { rank: 10, name: "Brave Lion", xp: "690 XP", avatarColor: "#82E0AA" },
+]
+
+export const LEADERBOARD_RESET_TIME = "3d 5h"
+
 // ── Activity Chart ──────────────────────────────────────────────────────
 export const TIME_PERIODS = ["All time", "Annual", "Monthly", "Weekly"] as const
 export type TimePeriod = (typeof TIME_PERIODS)[number]

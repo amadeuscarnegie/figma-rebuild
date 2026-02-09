@@ -6,6 +6,7 @@ import StreakCalendar from "@/components/streak/StreakCalendar"
 import LevelCard from "@/components/stats/LevelCard"
 import StatCard from "@/components/stats/StatCard"
 import ActivityChart from "@/components/chart/ActivityChart"
+import Leaderboard from "@/components/leaderboard/Leaderboard"
 import { STATS } from "@/data/constants"
 
 function EmptyTabContent({ tab }: { tab: TabName }) {
@@ -62,6 +63,8 @@ export default function AccountPage() {
                 <ActivityChart />
               </div>
             </div>
+          ) : activeTab === "Leaderboard" ? (
+            <Leaderboard />
           ) : (
             <EmptyTabContent tab={activeTab} />
           )}
