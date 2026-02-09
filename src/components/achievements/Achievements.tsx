@@ -58,7 +58,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
           alt=""
           className={cn(
             "w-full h-full object-cover",
-            !unlocked && "opacity-60 grayscale-[30%]"
+            !unlocked && "opacity-80"
           )}
         />
       </div>
@@ -67,7 +67,7 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
       <h3
         className={cn(
           "font-bold text-[16px] leading-normal text-center mb-[8px]",
-          unlocked ? "text-text-primary" : "text-text-secondary"
+          "text-text-primary"
         )}
       >
         {name}
