@@ -70,6 +70,27 @@ export const LEADERBOARD_DATA: LeaderboardEntry[] = [
 
 export const LEADERBOARD_RESET_TIME = "3d 5h"
 
+// ── Achievements ──────────────────────────────────────────────────────
+export interface Achievement {
+  name: string
+  description: string
+  xp: string
+  avatarKey: "scuba" | "headphones" | "sherlock" | "villain"
+  unlocked: boolean
+}
+
+export const ACHIEVEMENTS_DATA: Achievement[] = [
+  { name: "Quiz Master", description: "Get 5 correct answers in a row in a quiz", xp: "500 XP", avatarKey: "sherlock", unlocked: true },
+  { name: "Flashcard Streak", description: "Get 100% in a flashcard deck", xp: "300 XP", avatarKey: "headphones", unlocked: true },
+  { name: "Early Bird", description: "Complete a lesson before 8 AM", xp: "150 XP", avatarKey: "villain", unlocked: false },
+  { name: "Night Owl", description: "Complete a lesson after 10 PM", xp: "150 XP", avatarKey: "sherlock", unlocked: false },
+  { name: "Social Butterfly", description: "Post 5 comments in the community forum", xp: "200 XP", avatarKey: "headphones", unlocked: false },
+  { name: "Bookworm", description: "Read 10 course articles", xp: "400 XP", avatarKey: "villain", unlocked: true },
+  { name: "Treasure Hunter", description: "Find a hidden easter egg in the dashboard", xp: "1000 XP", avatarKey: "scuba", unlocked: false },
+  { name: "Speed Racer", description: "Complete a quiz in under 30 seconds", xp: "350 XP", avatarKey: "headphones", unlocked: false },
+  { name: "Legend", description: "Reach level 50", xp: "5000 XP", avatarKey: "scuba", unlocked: false },
+]
+
 // ── Activity Chart ──────────────────────────────────────────────────────
 export const TIME_PERIODS = ["All time", "Annual", "Monthly", "Weekly"] as const
 export type TimePeriod = (typeof TIME_PERIODS)[number]
