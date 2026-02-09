@@ -29,13 +29,17 @@ export default function TabGroup({ activeTab, onTabChange }: TabGroupProps) {
   useEffect(() => {
     updateIndicator()
     const container = containerRef.current
+    if (container) {
+      const activeButton = container.querySelector<HTMLButtonElement>(`[data-tab="${activeTab}"]`)
+      activeButton?.scrollIntoView({ behavior: "smooth", inline: "nearest", block: "nearest" })
+    }
     window.addEventListener("resize", updateIndicator)
     container?.addEventListener("scroll", updateIndicator)
     return () => {
       window.removeEventListener("resize", updateIndicator)
       container?.removeEventListener("scroll", updateIndicator)
     }
-  }, [updateIndicator])
+  }, [updateIndicator, activeTab])
 
   function handleKeyDown(e: React.KeyboardEvent) {
     const currentIndex = TABS.indexOf(activeTab)

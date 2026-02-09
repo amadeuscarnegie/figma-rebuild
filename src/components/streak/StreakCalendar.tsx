@@ -74,13 +74,15 @@ const WeekRow = memo(function WeekRow({ days, startDate, weekOffset }: WeekRowPr
       let j = i
       while (j < dayInfos.length && dayInfos[j].hasStreak) j++
       const streakDays = dayInfos.slice(i, j)
+      const spanCount = j - i
       cells.push(
         <div
           key={`streak-${i}`}
           className="flex items-center bg-amber-100 rounded-full h-[34px] sm:h-[40px]"
+          style={{ gridColumn: `span ${spanCount}` }}
         >
           {streakDays.map((sd, si) => (
-            <div key={si} className="w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] flex items-center justify-center">
+            <div key={si} className="flex-1 flex items-center justify-center">
               <img src={flameIcon} alt={`Streak day ${sd.day}`} className="w-[20px] h-[20px] sm:w-[24px] sm:h-[24px]" />
             </div>
           ))}
@@ -92,22 +94,24 @@ const WeekRow = memo(function WeekRow({ days, startDate, weekOffset }: WeekRowPr
       cells.push(
         <div
           key={`day-${i}`}
-          className={`w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] flex items-center justify-center rounded-full ${
+          className="flex items-center justify-center"
+        >
+          <div className={`w-[34px] h-[34px] sm:w-[40px] sm:h-[40px] flex items-center justify-center rounded-full ${
             info.isToday
               ? "bg-card-blue-bg ring-2 ring-blue-600"
               : "bg-grey-50"
-          }`}
-        >
-          <span className={`text-[12px] sm:text-[14px] font-semibold leading-normal ${
-            info.isToday ? "text-blue-600" : "text-text-secondary"
-          }`}>{info.day}</span>
+          }`}>
+            <span className={`text-[12px] sm:text-[14px] font-semibold leading-normal ${
+              info.isToday ? "text-blue-600" : "text-text-secondary"
+            }`}>{info.day}</span>
+          </div>
         </div>
       )
       i++
     }
   }
 
-  return <div className="flex gap-[4px]">{cells}</div>
+  return <div className="grid grid-cols-7">{cells}</div>
 })
 
 export default memo(function StreakCalendar() {
@@ -169,9 +173,9 @@ export default memo(function StreakCalendar() {
         </div>
 
         {/* Day headers */}
-        <div className="flex gap-[4px] mb-[16px]" aria-hidden="true">
+        <div className="grid grid-cols-7 mb-[16px]" aria-hidden="true">
           {DAYS_OF_WEEK.map((day) => (
-            <div key={day} className="w-[34px] sm:w-[40px] text-center text-[12px] sm:text-[14px] font-semibold text-text-muted leading-normal">
+            <div key={day} className="text-center text-[12px] sm:text-[14px] font-semibold text-text-muted leading-normal">
               {day}
             </div>
           ))}

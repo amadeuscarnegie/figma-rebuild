@@ -38,18 +38,18 @@ export default function AccountPage() {
           aria-labelledby={`tab-${activeTab}`}
         >
           {activeTab === "Overview" ? (
-            <div className="max-w-[768px] w-full mx-auto px-[16px] sm:px-[24px] lg:px-0 pt-[24px] sm:pt-[32px] pb-[48px]">
+            <div className="max-w-[768px] w-full mx-auto px-[16px] sm:px-[24px] lg:px-0 pt-[16px] sm:pt-[24px] pb-[48px]">
               {/* Top row: Streak Calendar + Level/Stats */}
-              <div className="flex flex-col lg:flex-row gap-[24px] sm:gap-[32px]">
+              <div className="flex flex-col lg:flex-row gap-[16px] sm:gap-[24px]">
                 {/* Left: Streak Calendar */}
                 <StreakCalendar />
 
                 {/* Right: Level card + Stat cards */}
-                <div className="flex flex-col gap-[16px] flex-1 min-w-0">
+                <div className="flex flex-col gap-[12px] sm:gap-[16px] flex-1 min-w-0">
                   <LevelCard />
 
                   {/* Stats grid - 2x2 */}
-                  <div className="grid grid-cols-2 gap-[14px]">
+                  <div className="grid grid-cols-2 gap-[12px] sm:gap-[14px]">
                     {STATS.map((stat) => (
                       <StatCard key={stat.label} value={stat.value} label={stat.label} />
                     ))}
@@ -58,7 +58,7 @@ export default function AccountPage() {
               </div>
 
               {/* Activity chart */}
-              <div className="mt-[32px]">
+              <div className="mt-[16px] sm:mt-[24px]">
                 <ActivityChart />
               </div>
             </div>
