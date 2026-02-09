@@ -20,8 +20,10 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
   return (
     <div
       className={cn(
-        "relative flex flex-col items-center rounded-[12px] border-[1.5px] p-[17px] pt-[17px] pb-[25px]",
-        unlocked ? "border-[#fedfa7] bg-white" : "border-border bg-white"
+        "relative flex flex-col items-center rounded-[12px] border-[1.5px] p-[17px] pt-[17px] pb-[25px] transition-transform duration-200 ease-out cursor-pointer hover:scale-[1.03] hover:shadow-md",
+        unlocked
+          ? "border-[#fedfa7] bg-white"
+          : "border-border bg-grey-50"
       )}
     >
       {/* Status icon - top left */}
@@ -31,8 +33,8 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
             <CircleCheck className="w-[16px] h-[16px] text-success" />
           </div>
         ) : (
-          <div className="w-[28px] h-[28px] rounded-full bg-grey-100 flex items-center justify-center">
-            <Lock className="w-[16px] h-[16px] text-text-muted" />
+          <div className="w-[28px] h-[28px] rounded-full bg-grey-200 flex items-center justify-center">
+            <Lock className="w-[16px] h-[16px] text-grey-300" />
           </div>
         )}
       </div>
@@ -43,8 +45,8 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
           className={cn(
             "inline-flex items-center h-[24px] px-[12px] rounded-full font-bold text-[12px] leading-normal",
             unlocked
-              ? "bg-[#ecfdf3] text-success"
-              : "bg-grey-100 text-text-muted"
+              ? "bg-card-blue-bg text-blue-600"
+              : "bg-grey-200 text-grey-300"
           )}
         >
           {xp}
@@ -57,8 +59,8 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
           src={AVATAR_MAP[avatarKey]}
           alt=""
           className={cn(
-            "w-full h-full object-cover",
-            !unlocked && "opacity-80"
+            "w-full h-full object-cover transition-transform duration-300",
+            unlocked ? "hover:scale-110" : "opacity-50 grayscale-[40%]"
           )}
         />
       </div>
@@ -67,20 +69,25 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
       <h3
         className={cn(
           "font-bold text-[16px] leading-normal text-center mb-[8px]",
-          "text-text-primary"
+          unlocked ? "text-text-primary" : "text-grey-300"
         )}
       >
         {name}
       </h3>
 
       {/* Description */}
-      <p className="font-normal text-[14px] text-text-muted leading-[1.3] text-center px-[8px] mb-[16px]">
+      <p
+        className={cn(
+          "font-normal text-[14px] leading-[1.3] text-center px-[8px] mb-[16px]",
+          unlocked ? "text-text-muted" : "text-grey-300"
+        )}
+      >
         {description}
       </p>
 
       {/* Progress bar - pushed to bottom */}
       <div className="w-full mt-auto">
-        <div className="h-[6px] rounded-full bg-grey-100 overflow-hidden">
+        <div className={cn("h-[6px] rounded-full overflow-hidden", unlocked ? "bg-grey-100" : "bg-grey-200")}>
           {unlocked && (
             <div className="h-full w-full bg-success rounded-full" />
           )}
