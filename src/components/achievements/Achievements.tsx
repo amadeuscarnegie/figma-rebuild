@@ -1,4 +1,4 @@
-import { memo } from "react"
+import { memo, useState, useCallback } from "react"
 import { CircleCheck, Lock } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ACHIEVEMENTS_DATA, type Achievement } from "@/data/constants"
@@ -97,9 +97,16 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
   )
 }
 
+const INITIAL_COUNT = 9
+
 export default memo(function Achievements() {
+  const [expanded, setExpanded] = useState(false)
+  const toggleExpanded = useCallback(() => setExpanded((v) => !v), [])
+
   const unlockedCount = ACHIEVEMENTS_DATA.filter((a) => a.unlocked).length
   const totalCount = ACHIEVEMENTS_DATA.length
+  const visibleAchievements = expanded ? ACHIEVEMENTS_DATA : ACHIEVEMENTS_DATA.slice(0, INITIAL_COUNT)
+  const hasMore = ACHIEVEMENTS_DATA.length > INITIAL_COUNT
 
   return (
     <div className="max-w-[768px] w-full mx-auto px-[16px] sm:px-[24px] lg:px-0 pt-[16px] sm:pt-[24px] pb-[48px]">
@@ -116,10 +123,22 @@ export default memo(function Achievements() {
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[16px]">
-          {ACHIEVEMENTS_DATA.map((achievement) => (
+          {visibleAchievements.map((achievement) => (
             <AchievementCard key={achievement.name} achievement={achievement} />
           ))}
         </div>
+
+        {/* Show more / Show less */}
+        {hasMore && (
+          <div className="flex justify-center mt-[24px] sm:mt-[32px]">
+            <button
+              onClick={toggleExpanded}
+              className="bg-grey-600 hover:bg-grey-800 text-white font-bold text-[16px] rounded-[10px] h-[48px] px-[20px] leading-normal shadow-[0px_4px_0px_0px_var(--color-grey-900)] cursor-pointer transition-all duration-100 active:translate-y-[4px] active:shadow-none"
+            >
+              {expanded ? "Show less" : "Show more"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

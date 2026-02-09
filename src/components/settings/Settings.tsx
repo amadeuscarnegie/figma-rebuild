@@ -2,6 +2,7 @@ import { memo, useState, useCallback } from "react"
 import { Mail, Trophy, Sparkles, EyeOff, Eye, ChevronDown, CircleCheck } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { USER } from "@/data/constants"
+import Modal from "@/components/ui/Modal"
 
 function SettingsInput({
   label,
@@ -366,8 +367,82 @@ function ChangePasswordCard() {
   )
 }
 
+function DeleteConfirmModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [confirmText, setConfirmText] = useState("")
+  const canDelete = confirmText.toLowerCase() === "delete"
+
+  const handleClose = useCallback(() => {
+    setConfirmText("")
+    onClose()
+  }, [onClose])
+
+  return (
+    <Modal
+      open={open}
+      onClose={handleClose}
+      label="Confirm account deletion"
+      className="w-[600px] p-0 rounded-[16px]"
+    >
+      <div className="flex flex-col">
+        {/* Body */}
+        <div className="px-[28px] pt-[24px] pb-[28px] flex flex-col gap-[28px]">
+          <div className="flex flex-col gap-[8px] pr-[24px]">
+            <h3 className="font-semibold text-[20px] text-text-primary leading-normal">
+              Are you sure?
+            </h3>
+            <p className="font-normal text-[16px] text-text-secondary leading-normal">
+              By deleting your account, you will lose all data associated with it permanently.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-[8px]">
+            <p className="font-normal text-[16px] text-[#C0362D] leading-normal">
+              To confirm deletion, type &quot;delete&quot; below:
+            </p>
+            <input
+              type="text"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder="delete"
+              className="h-[48px] px-[16px] bg-white border border-grey-300 rounded-[4px] font-semibold text-[16px] text-text-primary leading-normal outline-none focus:border-blue-600 transition-colors"
+            />
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between px-[28px] h-[88px] border-t border-border">
+          <button
+            type="button"
+            onClick={handleClose}
+            className="h-[44px] px-[20px] rounded-[4px] font-semibold text-[16px] text-text-secondary leading-normal cursor-pointer hover:bg-grey-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            disabled={!canDelete}
+            onClick={handleClose}
+            className={cn(
+              "h-[44px] px-[20px] rounded-[4px] font-semibold text-[16px] leading-normal transition-colors",
+              canDelete
+                ? "bg-[#C0362D] text-white cursor-pointer hover:bg-[#a82e26]"
+                : "bg-grey-200 text-text-muted cursor-not-allowed"
+            )}
+          >
+            Delete account
+          </button>
+        </div>
+      </div>
+    </Modal>
+  )
+}
+
 function DeleteAccountCard() {
   const [password, setPassword] = useState("")
+  const [showModal, setShowModal] = useState(false)
+
+  const openModal = useCallback(() => setShowModal(true), [])
+  const closeModal = useCallback(() => setShowModal(false), [])
 
   return (
     <Card>
@@ -383,10 +458,12 @@ function DeleteAccountCard() {
       <Divider />
 
       <div>
-        <ActionButton disabled={password.length === 0} variant="danger">
+        <ActionButton disabled={password.length === 0} variant="danger" onClick={openModal}>
           Delete account
         </ActionButton>
       </div>
+
+      <DeleteConfirmModal open={showModal} onClose={closeModal} />
     </Card>
   )
 }
