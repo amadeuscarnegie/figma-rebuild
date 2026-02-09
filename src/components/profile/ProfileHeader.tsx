@@ -1,5 +1,5 @@
 import { memo, useState } from "react"
-import avatarImg from "@/assets/images/icons/Avatars.svg"
+import avatarImg from "@/assets/images/icons/Avatar_Scuba_V2_SVG.svg"
 import { Pencil } from "lucide-react"
 import Modal from "@/components/ui/Modal"
 import { USER } from "@/data/constants"

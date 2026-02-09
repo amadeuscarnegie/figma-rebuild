@@ -4,20 +4,26 @@ import { cn } from "@/lib/utils"
 import { LEADERBOARD_DATA, LEADERBOARD_RESET_TIME, type LeaderboardEntry } from "@/data/constants"
 import firstPlaceIcon from "@/assets/images/icons/1st place.svg"
 import secondPlaceIcon from "@/assets/images/icons/2nd place.svg"
+import avatarScuba from "@/assets/images/icons/Avatar_Scuba_V2_SVG.svg"
+import avatarHeadphones from "@/assets/images/icons/Avatar_Headphones_V2_SVG.svg"
+import avatarSherlock from "@/assets/images/icons/Avatar_Sherlock_V2_SVG.svg"
+import avatarVillain from "@/assets/images/icons/Avatar_Villain_V2_SVG.svg"
 
-function Avatar({ name, color, size = 50 }: { name: string; color: string; size?: number }) {
-  const initial = name.charAt(0).toUpperCase()
+const AVATAR_MAP: Record<LeaderboardEntry["avatarKey"], string> = {
+  scuba: avatarScuba,
+  headphones: avatarHeadphones,
+  sherlock: avatarSherlock,
+  villain: avatarVillain,
+}
+
+function LeaderboardAvatar({ avatarKey, className }: { avatarKey: LeaderboardEntry["avatarKey"]; className?: string }) {
   return (
-    <div
-      className="rounded-full flex items-center justify-center shrink-0"
-      style={{ width: size, height: size, backgroundColor: color }}
-    >
-      <span
-        className="font-bold text-white leading-none"
-        style={{ fontSize: size * 0.38 }}
-      >
-        {initial}
-      </span>
+    <div className={cn("rounded-full overflow-hidden bg-grey-100 shrink-0", className)}>
+      <img
+        src={AVATAR_MAP[avatarKey]}
+        alt=""
+        className="w-full h-full object-cover"
+      />
     </div>
   )
 }
@@ -28,20 +34,20 @@ function AwardZoneEntry({ entry }: { entry: LeaderboardEntry }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-[12px] px-[20px] py-[12px]",
+        "flex items-center gap-[8px] sm:gap-[12px] px-[12px] sm:px-[20px] py-[10px] sm:py-[12px]",
         isFirst && "border-b border-border"
       )}
     >
       <img
         src={isFirst ? firstPlaceIcon : secondPlaceIcon}
         alt={`${entry.rank}${isFirst ? "st" : "nd"} place`}
-        className="w-[36px] h-[36px] shrink-0"
+        className="w-[28px] h-[28px] sm:w-[36px] sm:h-[36px] shrink-0"
       />
-      <Avatar name={entry.name} color={entry.avatarColor} size={56} />
-      <span className="font-bold text-[14px] text-text-primary flex-1 leading-normal">
+      <LeaderboardAvatar avatarKey={entry.avatarKey} className="w-[40px] h-[40px] sm:w-[56px] sm:h-[56px]" />
+      <span className="font-bold text-[14px] text-text-primary flex-1 leading-normal truncate">
         {entry.name}
       </span>
-      <span className="font-bold text-[14px] text-text-primary leading-normal">
+      <span className="font-bold text-[14px] text-text-primary leading-normal shrink-0">
         {entry.xp}
       </span>
     </div>
@@ -54,7 +60,7 @@ function RegularEntry({ entry, isFirst, isLast }: { entry: LeaderboardEntry; isF
   return (
     <div
       className={cn(
-        "flex items-center gap-[12px] px-[16px] py-[6px]",
+        "flex items-center gap-[8px] sm:gap-[12px] px-[8px] sm:px-[16px] py-[6px]",
         isFaded && "opacity-50",
         isLast && "border-t border-grey-100 pt-[10px]",
         entry.isYou && "bg-[#edf7fe] rounded-[12px] opacity-100 py-[8px]"
@@ -68,18 +74,18 @@ function RegularEntry({ entry, isFirst, isLast }: { entry: LeaderboardEntry; isF
       >
         {entry.rank}
       </span>
-      <Avatar name={entry.name} color={entry.avatarColor} size={50} />
+      <LeaderboardAvatar avatarKey={entry.avatarKey} className="w-[36px] h-[36px] sm:w-[50px] sm:h-[50px]" />
       <div className="flex items-center gap-[8px] flex-1 min-w-0">
         <span
           className={cn(
-            "font-bold text-[14px] leading-normal",
+            "font-bold text-[14px] leading-normal truncate",
             entry.isYou ? "text-[#224f70]" : "text-text-secondary"
           )}
         >
           {entry.name}
         </span>
         {entry.isYou && (
-          <span className="bg-[#ecf7ff] rounded-full px-[12px] h-[28px] flex items-center text-blue-600 font-semibold text-[14px] leading-normal shrink-0">
+          <span className="hidden sm:flex bg-[#ecf7ff] rounded-full px-[12px] h-[28px] items-center text-blue-600 font-semibold text-[14px] leading-normal shrink-0">
             You
           </span>
         )}
@@ -103,7 +109,7 @@ export default memo(function Leaderboard() {
   return (
     <div className="max-w-[768px] w-full mx-auto px-[16px] sm:px-[24px] lg:px-0 pt-[16px] sm:pt-[24px] pb-[48px]">
       {/* Card container */}
-      <div className="bg-white border-[1.5px] border-border rounded-[12px] p-[32px] flex flex-col gap-[32px]">
+      <div className="bg-white border-[1.5px] border-border rounded-[12px] p-[16px] sm:p-[32px] flex flex-col gap-[24px] sm:gap-[32px]">
         {/* Header row */}
         <div className="flex items-center">
           <h2 className="font-bold text-[18px] text-text-primary leading-normal">

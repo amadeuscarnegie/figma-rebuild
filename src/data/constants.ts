@@ -53,19 +53,19 @@ export interface LeaderboardEntry {
   rank: number
   name: string
   xp: string
-  avatarColor: string
+  avatarKey: "scuba" | "headphones" | "sherlock" | "villain"
   isYou?: boolean
   isAwardZone?: boolean
 }
 
 export const LEADERBOARD_DATA: LeaderboardEntry[] = [
-  { rank: 1, name: "Calm Llama", xp: "1,370 XP", avatarColor: "#FFB347", isAwardZone: true },
-  { rank: 2, name: "Silly Goose", xp: "1,240 XP", avatarColor: "#87CEEB", isAwardZone: true },
-  { rank: 6, name: "Happy Heron", xp: "860 XP", avatarColor: "#98D8C8" },
-  { rank: 7, name: "Hairy Duck", xp: "860 XP", avatarColor: "#F7DC6F" },
-  { rank: 8, name: "Sleepy Wombat", xp: "750 XP", avatarColor: "#BB8FCE", isYou: true },
-  { rank: 9, name: "Sly Fox", xp: "720 XP", avatarColor: "#85C1E9" },
-  { rank: 10, name: "Brave Lion", xp: "690 XP", avatarColor: "#82E0AA" },
+  { rank: 1, name: "Calm Llama", xp: "1,370 XP", avatarKey: "sherlock", isAwardZone: true },
+  { rank: 2, name: "Silly Goose", xp: "1,240 XP", avatarKey: "villain", isAwardZone: true },
+  { rank: 6, name: "Happy Heron", xp: "860 XP", avatarKey: "headphones" },
+  { rank: 7, name: "Hairy duck", xp: "860 XP", avatarKey: "villain" },
+  { rank: 8, name: "Sleepy Wombat", xp: "750 XP", avatarKey: "scuba", isYou: true },
+  { rank: 9, name: "Sly fox", xp: "720 XP", avatarKey: "sherlock" },
+  { rank: 10, name: "Brave lion", xp: "690 XP", avatarKey: "headphones" },
 ]
 
 export const LEADERBOARD_RESET_TIME = "3d 5h"
