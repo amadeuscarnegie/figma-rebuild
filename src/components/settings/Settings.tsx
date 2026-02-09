@@ -193,21 +193,26 @@ function ProfileDetailsCard() {
   const [year, setYear] = useState("11")
   const [saved, setSaved] = useState(false)
 
-  const origFirstName = USER.name.split(" ")[0]
-  const origLastName = USER.name.split(" ").slice(1).join(" ")
-  const origEmail = USER.email
+  const [savedValues, setSavedValues] = useState({
+    firstName: USER.name.split(" ")[0],
+    lastName: USER.name.split(" ").slice(1).join(" "),
+    email: USER.email as string,
+    role: "Student",
+    year: "11",
+  })
 
   const hasChanges =
-    firstName !== origFirstName ||
-    lastName !== origLastName ||
-    email !== origEmail ||
-    role !== "Student" ||
-    year !== "11"
+    firstName !== savedValues.firstName ||
+    lastName !== savedValues.lastName ||
+    email !== savedValues.email ||
+    role !== savedValues.role ||
+    year !== savedValues.year
 
   const handleSave = useCallback(() => {
+    setSavedValues({ firstName, lastName, email, role, year })
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
-  }, [])
+  }, [firstName, lastName, email, role, year])
 
   return (
     <Card>

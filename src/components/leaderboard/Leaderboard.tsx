@@ -1,4 +1,4 @@
-import { memo } from "react"
+import { memo, useState, useCallback, useRef, useEffect } from "react"
 import { Trophy } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { LEADERBOARD_DATA, LEADERBOARD_RESET_TIME, type LeaderboardEntry } from "@/data/constants"
@@ -15,6 +15,8 @@ const AVATAR_MAP: Record<LeaderboardEntry["avatarKey"], string> = {
   sherlock: avatarSherlock,
   villain: avatarVillain,
 }
+
+const COLLAPSED_RANKS = new Set([1, 2, 6, 7, 8, 9, 10])
 
 function LeaderboardAvatar({ avatarKey, className }: { avatarKey: LeaderboardEntry["avatarKey"]; className?: string }) {
   return (
@@ -103,8 +105,24 @@ function RegularEntry({ entry, isFirst, isLast }: { entry: LeaderboardEntry; isF
 }
 
 export default memo(function Leaderboard() {
+  const [expanded, setExpanded] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const [contentHeight, setContentHeight] = useState<number | undefined>(undefined)
+
   const awardEntries = LEADERBOARD_DATA.filter((e) => e.isAwardZone)
-  const regularEntries = LEADERBOARD_DATA.filter((e) => !e.isAwardZone)
+  const allRegular = LEADERBOARD_DATA.filter((e) => !e.isAwardZone)
+  const collapsedRegular = allRegular.filter((e) => COLLAPSED_RANKS.has(e.rank))
+
+  const regularEntries = expanded ? allRegular : collapsedRegular
+
+  const toggleExpanded = useCallback(() => setExpanded((v) => !v), [])
+
+  // Measure content height for smooth animation
+  useEffect(() => {
+    if (contentRef.current) {
+      setContentHeight(contentRef.current.scrollHeight)
+    }
+  }, [expanded])
 
   return (
     <div className="max-w-[768px] w-full mx-auto px-[16px] sm:px-[24px] lg:px-0 pt-[16px] sm:pt-[24px] pb-[48px]">
@@ -138,22 +156,29 @@ export default memo(function Leaderboard() {
           </div>
         </div>
 
-        {/* Regular entries */}
-        <div className="flex flex-col gap-[2px]">
+        {/* Regular entries with smooth height transition */}
+        <div
+          ref={contentRef}
+          className="flex flex-col gap-[2px] overflow-hidden transition-[max-height] duration-500 ease-in-out"
+          style={{ maxHeight: contentHeight ?? "none" }}
+        >
           {regularEntries.map((entry, idx) => (
             <RegularEntry
               key={entry.rank}
               entry={entry}
-              isFirst={idx === 0}
-              isLast={idx === regularEntries.length - 1}
+              isFirst={!expanded && idx === 0}
+              isLast={!expanded && idx === regularEntries.length - 1}
             />
           ))}
         </div>
 
-        {/* View all button */}
+        {/* View all / Show less button */}
         <div className="flex justify-center">
-          <button className="bg-grey-600 hover:bg-grey-800 text-white font-bold text-[16px] rounded-[10px] h-[48px] px-[20px] leading-normal shadow-[0px_4px_0px_0px_var(--color-grey-900)] cursor-pointer transition-all duration-100 active:translate-y-[4px] active:shadow-none">
-            View all
+          <button
+            onClick={toggleExpanded}
+            className="bg-grey-600 hover:bg-grey-800 text-white font-bold text-[16px] rounded-[10px] h-[48px] px-[20px] leading-normal shadow-[0px_4px_0px_0px_var(--color-grey-900)] cursor-pointer transition-all duration-100 active:translate-y-[4px] active:shadow-none"
+          >
+            {expanded ? "Show less" : "View all"}
           </button>
         </div>
       </div>
