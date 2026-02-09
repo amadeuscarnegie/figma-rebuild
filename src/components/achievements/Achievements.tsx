@@ -1,5 +1,5 @@
 import { memo, useState, useCallback } from "react"
-import { CircleCheck, Lock } from "lucide-react"
+import { CircleCheck, Lock, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ACHIEVEMENTS_DATA, type Achievement } from "@/data/constants"
 import avatarScuba from "@/assets/images/icons/Avatar_Scuba_V2_SVG.svg"
@@ -86,13 +86,11 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
       </p>
 
       {/* Progress bar - pushed to bottom */}
-      {unlocked && (
-        <div className="w-full mt-auto">
-          <div className="h-[6px] rounded-full overflow-hidden bg-grey-100">
-            <div className="h-full w-full bg-success rounded-full" />
-          </div>
+      <div className="w-full mt-auto">
+        <div className={cn("h-[6px] rounded-full overflow-hidden", unlocked ? "bg-grey-100" : "bg-transparent")}>
+          {unlocked && <div className="h-full w-full bg-success rounded-full" />}
         </div>
-      )}
+      </div>
     </div>
   )
 }
@@ -133,9 +131,13 @@ export default memo(function Achievements() {
           <div className="flex justify-center mt-[24px] sm:mt-[32px]">
             <button
               onClick={toggleExpanded}
-              className="bg-grey-600 hover:bg-grey-800 text-white font-bold text-[16px] rounded-[10px] h-[48px] px-[20px] leading-normal shadow-[0px_4px_0px_0px_var(--color-grey-900)] cursor-pointer transition-all duration-100 active:translate-y-[4px] active:shadow-none"
+              className="flex items-center gap-[4px] font-semibold text-[14px] text-blue-600 leading-normal cursor-pointer hover:text-blue-700 transition-colors"
             >
-              {expanded ? "Show less" : "Show more"}
+              {expanded ? (
+                <>Show less <ChevronUp className="w-[16px] h-[16px]" /></>
+              ) : (
+                <>View all {totalCount} <ChevronDown className="w-[16px] h-[16px]" /></>
+              )}
             </button>
           </div>
         )}

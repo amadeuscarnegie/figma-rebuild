@@ -1,5 +1,5 @@
-import { memo, useState, useCallback, useRef, useEffect } from "react"
-import { Trophy } from "lucide-react"
+import { memo, useState, useCallback } from "react"
+import { Trophy, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { LEADERBOARD_DATA, LEADERBOARD_RESET_TIME, type LeaderboardEntry } from "@/data/constants"
 import firstPlaceIcon from "@/assets/images/icons/1st place.svg"
@@ -104,25 +104,28 @@ function RegularEntry({ entry, isFirst, isLast }: { entry: LeaderboardEntry; isF
   )
 }
 
+function SkippedRanksIndicator() {
+  return (
+    <div className="flex items-center justify-center py-[4px] gap-[6px]">
+      <div className="w-[4px] h-[4px] rounded-full bg-grey-300" />
+      <div className="w-[4px] h-[4px] rounded-full bg-grey-300" />
+      <div className="w-[4px] h-[4px] rounded-full bg-grey-300" />
+    </div>
+  )
+}
+
 export default memo(function Leaderboard() {
   const [expanded, setExpanded] = useState(false)
-  const contentRef = useRef<HTMLDivElement>(null)
-  const [contentHeight, setContentHeight] = useState<number | undefined>(undefined)
 
   const awardEntries = LEADERBOARD_DATA.filter((e) => e.isAwardZone)
   const allRegular = LEADERBOARD_DATA.filter((e) => !e.isAwardZone)
   const collapsedRegular = allRegular.filter((e) => COLLAPSED_RANKS.has(e.rank))
+  const totalCount = LEADERBOARD_DATA.length
 
   const regularEntries = expanded ? allRegular : collapsedRegular
+  const showSkippedIndicator = !expanded && awardEntries.length > 0 && collapsedRegular.length > 0 && collapsedRegular[0].rank > awardEntries[awardEntries.length - 1].rank + 1
 
   const toggleExpanded = useCallback(() => setExpanded((v) => !v), [])
-
-  // Measure content height for smooth animation
-  useEffect(() => {
-    if (contentRef.current) {
-      setContentHeight(contentRef.current.scrollHeight)
-    }
-  }, [expanded])
 
   return (
     <div className="max-w-[768px] w-full mx-auto px-[16px] sm:px-[24px] lg:px-0 pt-[16px] sm:pt-[24px] pb-[48px]">
@@ -156,12 +159,11 @@ export default memo(function Leaderboard() {
           </div>
         </div>
 
-        {/* Regular entries with smooth height transition */}
-        <div
-          ref={contentRef}
-          className="flex flex-col gap-[2px] overflow-hidden transition-[max-height] duration-500 ease-in-out"
-          style={{ maxHeight: contentHeight ?? "none" }}
-        >
+        {/* Skipped ranks indicator (collapsed view only) */}
+        {showSkippedIndicator && <SkippedRanksIndicator />}
+
+        {/* Regular entries */}
+        <div className="flex flex-col gap-[2px]">
           {regularEntries.map((entry, idx) => (
             <RegularEntry
               key={entry.rank}
@@ -172,13 +174,17 @@ export default memo(function Leaderboard() {
           ))}
         </div>
 
-        {/* View all / Show less button */}
+        {/* View all / Show less link */}
         <div className="flex justify-center">
           <button
             onClick={toggleExpanded}
-            className="bg-grey-600 hover:bg-grey-800 text-white font-bold text-[16px] rounded-[10px] h-[48px] px-[20px] leading-normal shadow-[0px_4px_0px_0px_var(--color-grey-900)] cursor-pointer transition-all duration-100 active:translate-y-[4px] active:shadow-none"
+            className="flex items-center gap-[4px] font-semibold text-[14px] text-blue-600 leading-normal cursor-pointer hover:text-blue-700 transition-colors"
           >
-            {expanded ? "Show less" : "View all"}
+            {expanded ? (
+              <>Show less <ChevronUp className="w-[16px] h-[16px]" /></>
+            ) : (
+              <>View all {totalCount} <ChevronDown className="w-[16px] h-[16px]" /></>
+            )}
           </button>
         </div>
       </div>

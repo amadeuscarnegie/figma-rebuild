@@ -42,7 +42,7 @@ export default function Modal({
       aria-modal="true"
       aria-label={label}
     >
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="absolute inset-0 bg-[#101828]/50" onClick={onClose} />
       <div
         ref={panelRef}
         className={cn(

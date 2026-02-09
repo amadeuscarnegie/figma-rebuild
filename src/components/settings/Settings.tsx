@@ -1,5 +1,5 @@
 import { memo, useState, useCallback } from "react"
-import { Mail, Trophy, Sparkles, EyeOff, Eye, ChevronDown, CircleCheck } from "lucide-react"
+import { Mail, Trophy, Sparkles, EyeOff, Eye, ChevronDown, CircleCheck, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { USER } from "@/data/constants"
 import Modal from "@/components/ui/Modal"
@@ -93,7 +93,7 @@ function Toggle({ enabled, onToggle }: { enabled: boolean; onToggle: () => void 
       onClick={onToggle}
       className={cn(
         "relative w-[36px] h-[22px] rounded-full p-[2px] transition-colors duration-200 cursor-pointer shrink-0",
-        enabled ? "bg-[#1a96f3]" : "bg-grey-300"
+        enabled ? "bg-progress-fill" : "bg-grey-300"
       )}
     >
       <div
@@ -236,14 +236,16 @@ function ProfileDetailsCard() {
       <Divider />
 
       <div className="flex items-center gap-[12px]">
-        <ActionButton disabled={!hasChanges} onClick={handleSave}>
-          Save changes
+        <ActionButton disabled={!hasChanges && !saved} onClick={handleSave}>
+          {saved ? (
+            <span className="flex items-center gap-[8px]">
+              <Check className="w-[18px] h-[18px]" />
+              Saved
+            </span>
+          ) : (
+            "Save changes"
+          )}
         </ActionButton>
-        {saved && (
-          <span className="text-success font-semibold text-[14px] leading-normal">
-            Changes saved!
-          </span>
-        )}
       </div>
     </Card>
   )
@@ -343,25 +345,27 @@ function ChangePasswordCard() {
       <Divider />
 
       <div className="flex items-center gap-[8px]">
-        <ActionButton disabled={!canSave} onClick={handleSave}>
-          Save changes
+        <ActionButton disabled={!canSave && !saved} onClick={handleSave}>
+          {saved ? (
+            <span className="flex items-center gap-[8px]">
+              <Check className="w-[18px] h-[18px]" />
+              Saved
+            </span>
+          ) : (
+            "Save changes"
+          )}
         </ActionButton>
         <button
           type="button"
           disabled={!hasInput}
           onClick={handleCancel}
           className={cn(
-            "font-bold text-[16px] leading-normal px-[12px] transition-colors",
-            hasInput ? "text-text-primary cursor-pointer hover:text-grey-800" : "text-text-muted cursor-not-allowed"
+            "font-bold text-[16px] leading-normal px-[12px] py-[8px] rounded-[6px] transition-colors",
+            hasInput ? "text-text-primary cursor-pointer hover:bg-grey-100" : "text-text-muted cursor-not-allowed"
           )}
         >
           Cancel
         </button>
-        {saved && (
-          <span className="text-success font-semibold text-[14px] leading-normal">
-            Password changed!
-          </span>
-        )}
       </div>
     </Card>
   )
