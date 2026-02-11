@@ -51,7 +51,7 @@ export default function EndScene({
 
   return (
     <div
-      className="flex-1 flex flex-col relative"
+      className="flex-1 flex flex-col relative min-h-0"
       onClick={isAnimating ? skip : undefined}
     >
       {/* Close button - appears at stage 1 */}
@@ -70,7 +70,8 @@ export default function EndScene({
       )}
 
       {/* Scrollable content */}
-      <div className="flex-1 flex flex-col items-center px-[24px] pt-[24px] pb-[24px] overflow-y-auto">
+      <div className="flex-1 overflow-y-auto min-h-0">
+      <div className="flex flex-col items-center px-[24px] pt-[24px] pb-[24px]">
         {/* Lottie animation — outer clips whitespace, inner renders full animation */}
         <div
           className="transition-all duration-700 ease-out mb-[16px]"
@@ -133,6 +134,7 @@ export default function EndScene({
             Next: {nextLabel}
           </span>
         )}
+      </div>
       </div>
 
       {/* Footer with Continue button - appears at stage 3 */}
