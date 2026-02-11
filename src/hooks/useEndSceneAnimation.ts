@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react"
-import { playSound } from "@/lib/playSound"
+import { playSound, preloadSound } from "@/lib/playSound"
 import powerup6 from "@/assets/sounds/Powerup_upgrade_6.wav"
 import powerup1 from "@/assets/sounds/Powerup_upgrade_1.wav"
 import powerup10 from "@/assets/sounds/Powerup_upgrade_10.wav"
@@ -11,6 +11,13 @@ export function useEndSceneAnimation() {
   const [stage, setStage] = useState(0)
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const skippedRef = useRef(false)
+
+  // Preload sounds into Web Audio API buffers
+  useEffect(() => {
+    preloadSound(powerup6)
+    preloadSound(powerup1)
+    preloadSound(powerup10)
+  }, [])
 
   useEffect(() => {
     for (let i = 1; i < STAGE_DELAYS.length; i++) {

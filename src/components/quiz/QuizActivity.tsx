@@ -1,7 +1,7 @@
 import { useReducer, useEffect, useRef, useCallback, useMemo } from "react"
 import { QUIZ_QUESTIONS, QUIZ_META } from "@/data/quiz"
 import { quizReducer, createInitialState, computeFeedback } from "./quizReducer"
-import { playSound } from "@/lib/playSound"
+import { playSound, preloadSound } from "@/lib/playSound"
 import correctSound from "@/assets/sounds/duolingo-correct.mp3"
 import wrongSound from "@/assets/sounds/duolingo-wrong.mp3"
 import ActivityNavbar from "./ActivityNavbar"
@@ -19,6 +19,12 @@ export default function QuizActivity({ onClose }: QuizActivityProps) {
     QUIZ_QUESTIONS,
     createInitialState,
   )
+
+  // Preload feedback sounds into Web Audio API buffers
+  useEffect(() => {
+    preloadSound(correctSound)
+    preloadSound(wrongSound)
+  }, [])
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
