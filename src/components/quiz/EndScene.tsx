@@ -41,9 +41,9 @@ export default function EndScene({
     containerRef: lottieRef,
   })
 
-  const animatedMarks = useCountUp(marksEarned, { enabled: stage >= 2 })
-  const animatedTime = useCountUp(elapsedSeconds, { enabled: stage >= 3 })
-  const animatedXp = useCountUp(xpEarned, { enabled: stage >= 4 })
+  const animatedMarks = useCountUp(marksEarned, { duration: 500, enabled: stage >= 2 })
+  const animatedTime = useCountUp(elapsedSeconds, { duration: 500, enabled: stage >= 3 })
+  const animatedXp = useCountUp(xpEarned, { duration: 500, enabled: stage >= 4 })
 
   const progressFill = stage < 2 ? 0 : 1
 
@@ -70,14 +70,14 @@ export default function EndScene({
       )}
 
       {/* Scrollable content */}
-      <div className="flex-1 flex flex-col items-center px-[24px] pt-[24px] pb-[24px] overflow-y-auto">
+      <div className={`flex-1 flex flex-col items-center px-[24px] pt-[24px] pb-[24px] overflow-y-auto ${stage < 1 ? "justify-center" : ""}`}>
         {/* Lottie animation */}
         <div
           ref={lottieRef}
           className="transition-all duration-700 ease-out mb-[16px] overflow-visible"
           style={{
-            width: stage >= 1 ? 180 : 280,
-            height: stage >= 1 ? 225 : 350,
+            width: stage >= 1 ? 220 : 400,
+            height: stage >= 1 ? 275 : 500,
           }}
         />
 

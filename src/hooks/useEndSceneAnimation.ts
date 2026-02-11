@@ -3,31 +3,65 @@ import { playSound, preloadSound } from "@/lib/playSound"
 import powerup6 from "@/assets/sounds/Powerup_upgrade_6.wav"
 import powerup1 from "@/assets/sounds/Powerup_upgrade_1.wav"
 import powerup10 from "@/assets/sounds/Powerup_upgrade_10.wav"
+import winSound from "@/assets/sounds/Win_sound_4_1.wav"
+import successSound from "@/assets/sounds/Success_7_1.wav"
+import droneSound from "@/assets/sounds/Light_drone_1_1.wav"
 
-const STAGE_DELAYS = [0, 1200, 2100, 3000, 3900, 4800] as const
-const SOUNDS = [null, null, powerup6, powerup1, powerup10, null] as const
+const SOUND_SCHEDULE = [
+  { time: 0, sounds: [{ src: winSound, offset: 0.47 }, { src: successSound, offset: 0.47 }] },
+  { time: 1250, sounds: [{ src: droneSound, offset: 0 }] },
+  { time: 1900, sounds: [{ src: powerup6, offset: 0 }] },
+  { time: 2300, sounds: [{ src: powerup1, offset: 0 }] },
+  { time: 2700, sounds: [{ src: powerup10, offset: 0 }] },
+] as const
+
+const STAGE_SCHEDULE = [
+  { time: 0, stage: 0 },
+  { time: 1250, stage: 1 },
+  { time: 1800, stage: 2 },
+  { time: 2200, stage: 3 },
+  { time: 2300, stage: 4 },
+  { time: 3100, stage: 5 },
+] as const
 
 export function useEndSceneAnimation() {
   const [stage, setStage] = useState(0)
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const skippedRef = useRef(false)
 
-  // Preload sounds into Web Audio API buffers
+  // Preload all sounds into Web Audio API buffers
   useEffect(() => {
     preloadSound(powerup6)
     preloadSound(powerup1)
     preloadSound(powerup10)
+    preloadSound(winSound)
+    preloadSound(successSound)
+    preloadSound(droneSound)
   }, [])
 
   useEffect(() => {
-    for (let i = 1; i < STAGE_DELAYS.length; i++) {
-      const timer = setTimeout(() => {
+    // Schedule sounds
+    for (const entry of SOUND_SCHEDULE) {
+      const schedule = () => {
         if (skippedRef.current) return
-        setStage(i)
-        const sound = SOUNDS[i]
-        if (sound) playSound(sound)
-      }, STAGE_DELAYS[i])
-      timersRef.current.push(timer)
+        for (const s of entry.sounds) playSound(s.src, s.offset)
+      }
+      if (entry.time === 0) {
+        schedule()
+      } else {
+        timersRef.current.push(setTimeout(schedule, entry.time))
+      }
+    }
+
+    // Schedule stage transitions
+    for (const entry of STAGE_SCHEDULE) {
+      if (entry.time === 0) continue // stage 0 is the initial state
+      timersRef.current.push(
+        setTimeout(() => {
+          if (skippedRef.current) return
+          setStage(entry.stage)
+        }, entry.time),
+      )
     }
 
     return () => {

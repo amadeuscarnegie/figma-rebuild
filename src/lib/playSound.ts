@@ -30,7 +30,7 @@ export async function preloadSound(src: string): Promise<void> {
   buffers.set(src, audioBuffer)
 }
 
-export function playSound(src: string) {
+export function playSound(src: string, offset = 0) {
   const audioCtx = getContext()
 
   // Resume context if suspended (browser autoplay policy)
@@ -43,7 +43,7 @@ export function playSound(src: string) {
     const source = audioCtx.createBufferSource()
     source.buffer = buffer
     source.connect(audioCtx.destination)
-    source.start(0)
+    source.start(0, offset)
   } else {
     // Fallback for non-preloaded sounds
     const audio = new Audio(src)

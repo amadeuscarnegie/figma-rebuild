@@ -1,13 +1,15 @@
-import { useReducer, useEffect, useRef, useCallback, useMemo } from "react"
+import { useReducer, useEffect, useRef, useCallback, useMemo, useState } from "react"
 import { QUIZ_QUESTIONS, QUIZ_META } from "@/data/quiz"
 import { quizReducer, createInitialState, computeFeedback } from "./quizReducer"
 import { playSound, preloadSound } from "@/lib/playSound"
 import correctSound from "@/assets/sounds/duolingo-correct.mp3"
 import wrongSound from "@/assets/sounds/duolingo-wrong.mp3"
+import { Play } from "lucide-react"
 import ActivityNavbar from "./ActivityNavbar"
 import QuestionPanel from "./QuestionPanel"
 import ActivityFooter from "./ActivityFooter"
 import EndScene from "./EndScene"
+import type { QuestionResult } from "./types"
 
 interface QuizActivityProps {
   onClose: () => void
@@ -75,6 +77,19 @@ export default function QuizActivity({ onClose }: QuizActivityProps) {
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [state.phase, state.selectedIndices.length, question.marks, handleCheck])
 
+  // Debug: skip to end scene instantly with mock data
+  const [debugEndScene, setDebugEndScene] = useState(false)
+  const [endSceneKey, setEndSceneKey] = useState(0)
+  const showEndScene = state.phase === "complete" || debugEndScene
+
+  const debugResults: QuestionResult[] = QUIZ_QUESTIONS.map((q, i) => ({
+    questionId: q.id,
+    selectedIndices: q.correctIndices,
+    correct: i % 4 !== 3, // 75% correct
+    marksEarned: i % 4 !== 3 ? q.marks : 0,
+    maxMarks: q.marks,
+  }))
+
   // Compute streak: count consecutive correct answers from the end of results
   const { streakCount, streakActive } = useMemo(() => {
     let count = 0
@@ -87,7 +102,25 @@ export default function QuizActivity({ onClose }: QuizActivityProps) {
 
   return (
     <div className="fixed inset-0 z-50 bg-white flex flex-col">
-      {state.phase !== "complete" && (
+      {/* Debug: play/replay end scene button */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation()
+          if (debugEndScene) {
+            setEndSceneKey((k) => k + 1)
+          } else {
+            setDebugEndScene(true)
+          }
+        }}
+        className="absolute top-[12px] right-[12px] z-[100] w-[32px] h-[32px] rounded-full bg-grey-200 flex items-center justify-center cursor-pointer hover:bg-grey-300 transition-colors opacity-50 hover:opacity-100"
+        aria-label="Debug: play end scene"
+        title="Debug: play end scene"
+      >
+        <Play className="w-[16px] h-[16px] text-grey-600 ml-[2px]" />
+      </button>
+
+      {!showEndScene && (
         <ActivityNavbar
           results={state.results}
           totalQuestions={state.questions.length}
@@ -97,11 +130,12 @@ export default function QuizActivity({ onClose }: QuizActivityProps) {
         />
       )}
 
-      {state.phase === "complete" ? (
+      {showEndScene ? (
         <EndScene
-          results={state.results}
+          key={endSceneKey}
+          results={debugEndScene ? debugResults : state.results}
           totalMarks={QUIZ_META.totalMarks}
-          elapsedSeconds={state.elapsedSeconds}
+          elapsedSeconds={debugEndScene ? 47 : state.elapsedSeconds}
           xpEarned={QUIZ_META.xpReward}
           nextLabel={QUIZ_META.subject}
           onRestart={handleRestart}
