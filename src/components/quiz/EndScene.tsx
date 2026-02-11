@@ -70,16 +70,30 @@ export default function EndScene({
       )}
 
       {/* Scrollable content */}
-      <div className={`flex-1 flex flex-col items-center px-[24px] pt-[24px] pb-[24px] overflow-y-auto ${stage < 1 ? "justify-center" : ""}`}>
-        {/* Lottie animation */}
+      <div className="flex-1 flex flex-col items-center px-[24px] pt-[24px] pb-[24px] overflow-y-auto">
+        {/* Lottie animation — outer clips whitespace, inner renders full animation */}
         <div
-          ref={lottieRef}
-          className="transition-all duration-700 ease-out mb-[16px] overflow-visible"
+          className="transition-all duration-700 ease-out mb-[16px]"
           style={{
-            width: stage >= 1 ? 220 : 400,
-            height: stage >= 1 ? 275 : 500,
+            width: stage >= 1 ? 300 : 400,
+            height: stage >= 1 ? 220 : 500,
+            overflow: stage >= 1 ? "hidden" : "visible",
+            transform:
+              stage < 1
+                ? "translateY(calc(50vh - 250px - 24px))"
+                : "translateY(0)",
           }}
-        />
+        >
+          <div
+            ref={lottieRef}
+            className="transition-all duration-700 ease-out"
+            style={{
+              width: stage >= 1 ? 300 : 400,
+              height: stage >= 1 ? 375 : 500,
+              marginTop: stage >= 1 ? -80 : 0,
+            }}
+          />
+        </div>
 
         {/* Summary card - appears at stage 1 */}
         {stage >= 1 && (

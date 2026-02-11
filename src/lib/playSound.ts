@@ -4,22 +4,38 @@ const buffers = new Map<string, AudioBuffer>()
 function getContext(): AudioContext {
   if (!ctx) {
     ctx = new AudioContext()
-
-    // On mobile, AudioContext starts suspended and needs a user gesture to resume.
-    // Register a one-time listener on the first touch/click to unlock it.
-    const unlock = () => {
-      if (ctx && ctx.state === "suspended") {
-        ctx.resume()
-      }
-      document.removeEventListener("touchstart", unlock)
-      document.removeEventListener("touchend", unlock)
-      document.removeEventListener("click", unlock)
-    }
-    document.addEventListener("touchstart", unlock, { once: true })
-    document.addEventListener("touchend", unlock, { once: true })
-    document.addEventListener("click", unlock, { once: true })
+    setupUnlock(ctx)
   }
   return ctx
+}
+
+/**
+ * Persistent unlock listener that keeps retrying on every user gesture
+ * until the AudioContext is confirmed running. Removes ALL listeners
+ * once unlocked, instead of using { once: true } per event.
+ */
+function setupUnlock(audioCtx: AudioContext) {
+  if (audioCtx.state === "running") return
+
+  const events = ["touchstart", "touchend", "click", "keydown"] as const
+
+  const unlock = () => {
+    audioCtx.resume().then(() => {
+      if (audioCtx.state === "running") {
+        events.forEach((e) => document.removeEventListener(e, unlock))
+      }
+    })
+  }
+
+  events.forEach((e) => document.addEventListener(e, unlock, false))
+
+  // Handle Safari's "interrupted" state (tab switch, phone call, screen lock).
+  // Re-register unlock listeners so the next user gesture can resume playback.
+  audioCtx.addEventListener("statechange", () => {
+    if (audioCtx.state === "interrupted" || audioCtx.state === "suspended") {
+      events.forEach((e) => document.addEventListener(e, unlock, false))
+    }
+  })
 }
 
 export async function preloadSound(src: string): Promise<void> {
@@ -33,8 +49,10 @@ export async function preloadSound(src: string): Promise<void> {
 export function playSound(src: string, offset = 0) {
   const audioCtx = getContext()
 
-  // Resume context if suspended (browser autoplay policy)
-  if (audioCtx.state === "suspended") {
+  // Resume context if not running (browser autoplay policy).
+  // On mobile this is often called from within a user gesture (tap on Check,
+  // tap on Continue) so resume() succeeds synchronously in the gesture stack.
+  if (audioCtx.state !== "running") {
     audioCtx.resume()
   }
 
@@ -44,9 +62,5 @@ export function playSound(src: string, offset = 0) {
     source.buffer = buffer
     source.connect(audioCtx.destination)
     source.start(0, offset)
-  } else {
-    // Fallback for non-preloaded sounds
-    const audio = new Audio(src)
-    audio.play().catch(() => {})
   }
 }

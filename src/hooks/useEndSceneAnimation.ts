@@ -9,19 +9,19 @@ import droneSound from "@/assets/sounds/Light_drone_1_1.wav"
 
 const SOUND_SCHEDULE = [
   { time: 0, sounds: [{ src: winSound, offset: 0.47 }, { src: successSound, offset: 0.47 }] },
-  { time: 1250, sounds: [{ src: droneSound, offset: 0 }] },
-  { time: 1900, sounds: [{ src: powerup6, offset: 0 }] },
-  { time: 2300, sounds: [{ src: powerup1, offset: 0 }] },
-  { time: 2700, sounds: [{ src: powerup10, offset: 0 }] },
+  { time: 1550, sounds: [{ src: droneSound, offset: 0 }] },
+  { time: 2200, sounds: [{ src: powerup6, offset: 0 }] },
+  { time: 2600, sounds: [{ src: powerup1, offset: 0 }] },
+  { time: 3000, sounds: [{ src: powerup10, offset: 0 }] },
 ] as const
 
 const STAGE_SCHEDULE = [
   { time: 0, stage: 0 },
-  { time: 1250, stage: 1 },
-  { time: 1800, stage: 2 },
-  { time: 2200, stage: 3 },
-  { time: 2300, stage: 4 },
-  { time: 3100, stage: 5 },
+  { time: 1350, stage: 1 },
+  { time: 2100, stage: 2 },
+  { time: 2500, stage: 3 },
+  { time: 2600, stage: 4 },
+  { time: 3400, stage: 5 },
 ] as const
 
 export function useEndSceneAnimation() {
