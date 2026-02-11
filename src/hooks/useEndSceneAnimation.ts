@@ -4,7 +4,7 @@ import powerup6 from "@/assets/sounds/Powerup_upgrade_6.wav"
 import powerup1 from "@/assets/sounds/Powerup_upgrade_1.wav"
 import powerup10 from "@/assets/sounds/Powerup_upgrade_10.wav"
 
-const STAGE_DELAYS = [0, 1500, 2500, 3500, 4500, 5500] as const
+const STAGE_DELAYS = [0, 1200, 2100, 3000, 3900, 4800] as const
 const SOUNDS = [null, null, powerup6, powerup1, powerup10, null] as const
 
 export function useEndSceneAnimation() {

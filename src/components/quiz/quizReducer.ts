@@ -13,7 +13,7 @@ export function createInitialState(questions: QuizQuestion[]): QuizState {
   }
 }
 
-function computeFeedback(
+export function computeFeedback(
   selectedIndices: number[],
   correctIndices: number[],
 ): { feedbackType: FeedbackType; marksEarned: number } {

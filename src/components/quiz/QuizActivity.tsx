@@ -1,6 +1,6 @@
 import { useReducer, useEffect, useRef, useCallback, useMemo } from "react"
 import { QUIZ_QUESTIONS, QUIZ_META } from "@/data/quiz"
-import { quizReducer, createInitialState } from "./quizReducer"
+import { quizReducer, createInitialState, computeFeedback } from "./quizReducer"
 import { playSound } from "@/lib/playSound"
 import correctSound from "@/assets/sounds/duolingo-correct.mp3"
 import wrongSound from "@/assets/sounds/duolingo-wrong.mp3"
@@ -32,11 +32,12 @@ export default function QuizActivity({ onClose }: QuizActivityProps) {
     }
   }, [state.phase])
 
-  // Play correct/wrong sound on feedback
-  useEffect(() => {
-    if (state.phase !== "feedback" || !state.feedbackType) return
-    playSound(state.feedbackType === "incorrect" ? wrongSound : correctSound)
-  }, [state.results.length])
+  const handleCheck = useCallback(() => {
+    const q = state.questions[state.currentIndex]
+    const { feedbackType } = computeFeedback(state.selectedIndices, q.correctIndices)
+    playSound(feedbackType === "incorrect" ? wrongSound : correctSound)
+    dispatch({ type: "CHECK_ANSWER" })
+  }, [state.currentIndex, state.selectedIndices, state.questions])
 
   const handleRestart = useCallback(() => {
     dispatch({ type: "RESTART", questions: QUIZ_QUESTIONS })
@@ -59,14 +60,14 @@ export default function QuizActivity({ onClose }: QuizActivityProps) {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key !== "Enter") return
       if (state.phase === "question" && state.selectedIndices.length === question.marks) {
-        dispatch({ type: "CHECK_ANSWER" })
+        handleCheck()
       } else if (state.phase === "feedback") {
         dispatch({ type: "CONTINUE" })
       }
     }
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [state.phase, state.selectedIndices.length, question.marks])
+  }, [state.phase, state.selectedIndices.length, question.marks, handleCheck])
 
   // Compute streak: count consecutive correct answers from the end of results
   const { streakCount, streakActive } = useMemo(() => {
@@ -126,7 +127,7 @@ export default function QuizActivity({ onClose }: QuizActivityProps) {
               mode="question"
               marks={question.marks}
               canCheck={state.selectedIndices.length === question.marks}
-              onCheck={() => dispatch({ type: "CHECK_ANSWER" })}
+              onCheck={handleCheck}
             />
           )}
         </>
