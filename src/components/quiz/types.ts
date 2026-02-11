@@ -31,7 +31,6 @@ export interface QuizState {
   selectedIndices: number[]
   results: QuestionResult[]
   feedbackType: FeedbackType | null
-  elapsedSeconds: number
 }
 
 export type QuizAction =
@@ -39,6 +38,5 @@ export type QuizAction =
   | { type: "DESELECT_OPTION"; index: number }
   | { type: "CHECK_ANSWER" }
   | { type: "CONTINUE" }
-  | { type: "TICK" }
   | { type: "RESTART"; questions: QuizQuestion[] }
   | { type: "REDO_MISTAKES"; questions: QuizQuestion[] }

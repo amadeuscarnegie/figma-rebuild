@@ -29,31 +29,10 @@ export function useEndSceneAnimation() {
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const skippedRef = useRef(false)
 
-  // Preload all sounds into Web Audio API buffers
   useEffect(() => {
-    preloadSound(powerup6)
-    preloadSound(powerup1)
-    preloadSound(powerup10)
-    preloadSound(winSound)
-    preloadSound(successSound)
-    preloadSound(droneSound)
-  }, [])
+    const startTime = performance.now()
 
-  useEffect(() => {
-    // Schedule sounds
-    for (const entry of SOUND_SCHEDULE) {
-      const schedule = () => {
-        if (skippedRef.current) return
-        for (const s of entry.sounds) playSound(s.src, s.offset)
-      }
-      if (entry.time === 0) {
-        schedule()
-      } else {
-        timersRef.current.push(setTimeout(schedule, entry.time))
-      }
-    }
-
-    // Schedule stage transitions
+    // Schedule stage transitions immediately (visual, no async dependency)
     for (const entry of STAGE_SCHEDULE) {
       if (entry.time === 0) continue // stage 0 is the initial state
       timersRef.current.push(
@@ -64,7 +43,37 @@ export function useEndSceneAnimation() {
       )
     }
 
+    // Preload all sounds, then schedule with time compensation so
+    // later sounds still fire at the correct wall-clock time.
+    let cancelled = false
+    Promise.all([
+      preloadSound(powerup6),
+      preloadSound(powerup1),
+      preloadSound(powerup10),
+      preloadSound(winSound),
+      preloadSound(successSound),
+      preloadSound(droneSound),
+    ]).then(() => {
+      if (cancelled || skippedRef.current) return
+
+      const elapsed = performance.now() - startTime
+
+      for (const entry of SOUND_SCHEDULE) {
+        const remaining = entry.time - elapsed
+        const fire = () => {
+          if (skippedRef.current) return
+          for (const s of entry.sounds) playSound(s.src, s.offset)
+        }
+        if (remaining <= 0) {
+          fire()
+        } else {
+          timersRef.current.push(setTimeout(fire, remaining))
+        }
+      }
+    })
+
     return () => {
+      cancelled = true
       timersRef.current.forEach(clearTimeout)
       timersRef.current = []
     }

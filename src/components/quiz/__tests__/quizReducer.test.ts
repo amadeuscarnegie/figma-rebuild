@@ -31,7 +31,6 @@ describe("quizReducer", () => {
     expect(state.currentIndex).toBe(0)
     expect(state.selectedIndices).toEqual([])
     expect(state.results).toEqual([])
-    expect(state.elapsedSeconds).toBe(0)
   })
 
   it("selects an option in single-select mode", () => {
@@ -128,11 +127,6 @@ describe("quizReducer", () => {
     expect(state.results[1].marksEarned).toBe(1)
   })
 
-  it("TICK increments elapsed seconds", () => {
-    const state = quizReducer(init(), { type: "TICK" })
-    expect(state.elapsedSeconds).toBe(1)
-  })
-
   it("RESTART resets to initial state", () => {
     let state = init()
     state = quizReducer(state, { type: "SELECT_OPTION", index: 1 })
@@ -141,7 +135,6 @@ describe("quizReducer", () => {
     expect(state.phase).toBe("question")
     expect(state.currentIndex).toBe(0)
     expect(state.results).toEqual([])
-    expect(state.elapsedSeconds).toBe(0)
   })
 
   it("REDO_MISTAKES creates quiz with provided questions", () => {

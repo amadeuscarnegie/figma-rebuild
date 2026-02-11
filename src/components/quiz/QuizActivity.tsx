@@ -11,6 +11,14 @@ import ActivityFooter from "./ActivityFooter"
 import EndScene from "./EndScene"
 import type { QuestionResult } from "./types"
 
+const DEBUG_RESULTS: QuestionResult[] = QUIZ_QUESTIONS.map((q, i) => ({
+  questionId: q.id,
+  selectedIndices: q.correctIndices,
+  correct: i % 4 !== 3, // 75% correct
+  marksEarned: i % 4 !== 3 ? q.marks : 0,
+  maxMarks: q.marks,
+}))
+
 interface QuizActivityProps {
   onClose: () => void
 }
@@ -28,26 +36,31 @@ export default function QuizActivity({ onClose }: QuizActivityProps) {
     preloadSound(wrongSound)
   }, [])
 
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  // Ref-based timer — avoids per-second re-renders of the entire tree.
+  // Elapsed time is captured once when the quiz completes.
+  const startTimeRef = useRef(Date.now())
+  const [elapsedSeconds, setElapsedSeconds] = useState(0)
 
-  // Start/stop timer
   useEffect(() => {
-    if (state.phase !== "complete") {
-      timerRef.current = setInterval(() => dispatch({ type: "TICK" }), 1000)
-    }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current)
+    if (state.phase === "complete") {
+      setElapsedSeconds(Math.floor((Date.now() - startTimeRef.current) / 1000))
     }
   }, [state.phase])
 
+  const stateRef = useRef(state)
+  stateRef.current = state
+
   const handleCheck = useCallback(() => {
-    const q = state.questions[state.currentIndex]
-    const { feedbackType } = computeFeedback(state.selectedIndices, q.correctIndices)
+    const s = stateRef.current
+    const q = s.questions[s.currentIndex]
+    const { feedbackType } = computeFeedback(s.selectedIndices, q.correctIndices)
     playSound(feedbackType === "incorrect" ? wrongSound : correctSound)
     dispatch({ type: "CHECK_ANSWER" })
-  }, [state.currentIndex, state.selectedIndices, state.questions])
+  }, [])
 
   const handleRestart = useCallback(() => {
+    startTimeRef.current = Date.now()
+    setElapsedSeconds(0)
     dispatch({ type: "RESTART", questions: QUIZ_QUESTIONS })
   }, [])
 
@@ -57,38 +70,36 @@ export default function QuizActivity({ onClose }: QuizActivityProps) {
     )
     const mistakeQuestions = QUIZ_QUESTIONS.filter((q) => mistakeIds.has(q.id))
     if (mistakeQuestions.length > 0) {
+      startTimeRef.current = Date.now()
+      setElapsedSeconds(0)
       dispatch({ type: "REDO_MISTAKES", questions: mistakeQuestions })
     }
   }, [state.results])
 
   const question = state.questions[state.currentIndex]
 
-  // Enter key to check/continue
+  // Enter key to check/continue — reads from stateRef so the listener is stable
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key !== "Enter") return
-      if (state.phase === "question" && state.selectedIndices.length === question.marks) {
+      const s = stateRef.current
+      const q = s.questions[s.currentIndex]
+      if (s.phase === "question" && s.selectedIndices.length === q.marks) {
         handleCheck()
-      } else if (state.phase === "feedback") {
+      } else if (s.phase === "feedback") {
         dispatch({ type: "CONTINUE" })
       }
     }
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [state.phase, state.selectedIndices.length, question.marks, handleCheck])
+  }, [handleCheck])
 
   // Debug: skip to end scene instantly with mock data
   const [debugEndScene, setDebugEndScene] = useState(false)
   const [endSceneKey, setEndSceneKey] = useState(0)
   const showEndScene = state.phase === "complete" || debugEndScene
 
-  const debugResults: QuestionResult[] = QUIZ_QUESTIONS.map((q, i) => ({
-    questionId: q.id,
-    selectedIndices: q.correctIndices,
-    correct: i % 4 !== 3, // 75% correct
-    marksEarned: i % 4 !== 3 ? q.marks : 0,
-    maxMarks: q.marks,
-  }))
+  const debugResults = DEBUG_RESULTS
 
   // Compute streak: count consecutive correct answers from the end of results
   const { streakCount, streakActive } = useMemo(() => {
@@ -135,7 +146,7 @@ export default function QuizActivity({ onClose }: QuizActivityProps) {
           key={endSceneKey}
           results={debugEndScene ? debugResults : state.results}
           totalMarks={QUIZ_META.totalMarks}
-          elapsedSeconds={debugEndScene ? 47 : state.elapsedSeconds}
+          elapsedSeconds={debugEndScene ? 47 : elapsedSeconds}
           xpEarned={QUIZ_META.xpReward}
           nextLabel={QUIZ_META.subject}
           onRestart={handleRestart}

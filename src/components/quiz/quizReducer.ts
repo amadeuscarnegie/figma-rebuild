@@ -9,7 +9,6 @@ export function createInitialState(questions: QuizQuestion[]): QuizState {
     selectedIndices: [],
     results: [],
     feedbackType: null,
-    elapsedSeconds: 0,
   }
 }
 
@@ -98,10 +97,6 @@ export function quizReducer(state: QuizState, action: QuizAction): QuizState {
         selectedIndices: [],
         feedbackType: null,
       }
-    }
-
-    case "TICK": {
-      return { ...state, elapsedSeconds: state.elapsedSeconds + 1 }
     }
 
     case "RESTART": {

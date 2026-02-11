@@ -24,10 +24,20 @@ export function useLottie({ path, containerRef, autoplay = true }: UseLottieOpti
 
     animRef.current = anim
 
-    // After initial play completes, loop frames 360-480
+    // After initial play completes, loop the idle segment a few times then stop
+    let loopCount = 0
+    const maxLoops = 3
+
     anim.addEventListener("complete", () => {
       anim.playSegments([360, 480], true)
       anim.loop = true
+    })
+
+    anim.addEventListener("loopComplete", () => {
+      loopCount++
+      if (loopCount >= maxLoops) {
+        anim.loop = false
+      }
     })
 
     return () => {
