@@ -8,17 +8,28 @@ interface ProgressBarProps {
   segments: Segment[]
   total: number
   className?: string
+  fillFraction?: number
 }
 
-export default function ProgressBar({ segments, total, className }: ProgressBarProps) {
+export default function ProgressBar({
+  segments,
+  total,
+  className,
+  fillFraction,
+}: ProgressBarProps) {
   const correctCount = segments.filter((s) => s.correct).length
   const incorrectCount = segments.length - correctCount
   const answered = segments.length
 
-  // Red covers 0 → answered (z-1), green covers 0 → correctCount (z-2)
-  // This naturally creates the overlap effect
-  const answeredPct = total > 0 ? `${(answered / total) * 100}%` : "0%"
-  const correctPct = total > 0 ? `${(correctCount / total) * 100}%` : "0%"
+  const answeredRaw = total > 0 ? (answered / total) * 100 : 0
+  const correctRaw = total > 0 ? (correctCount / total) * 100 : 0
+
+  // Apply fill fraction multiplier when animating
+  const fraction = fillFraction ?? 1
+  const answeredPct = `${answeredRaw * fraction}%`
+  const correctPct = `${correctRaw * fraction}%`
+
+  const isAnimating = fillFraction !== undefined
 
   return (
     <div
@@ -35,7 +46,10 @@ export default function ProgressBar({ segments, total, className }: ProgressBarP
       {/* Red (incorrect) segment — covers 0 to total answered */}
       {incorrectCount > 0 && (
         <div
-          className="absolute inset-y-0 left-0 bg-progress-incorrect rounded-full z-[1] overflow-hidden"
+          className={cn(
+            "absolute inset-y-0 left-0 bg-progress-incorrect rounded-full z-[1] overflow-hidden",
+            isAnimating && "transition-[width] duration-[3000ms] ease-linear",
+          )}
           style={{ width: answeredPct }}
         >
           <div className="absolute top-[4px] left-[8px] right-[8px] h-[4px] bg-white/30 rounded-full" />
@@ -45,7 +59,10 @@ export default function ProgressBar({ segments, total, className }: ProgressBarP
       {/* Green (correct) segment — covers 0 to correct count, overlaps red */}
       {correctCount > 0 && (
         <div
-          className="absolute inset-y-0 left-0 bg-progress-correct rounded-full z-[2] overflow-hidden"
+          className={cn(
+            "absolute inset-y-0 left-0 bg-progress-correct rounded-full z-[2] overflow-hidden",
+            isAnimating && "transition-[width] duration-[3000ms] ease-linear",
+          )}
           style={{ width: incorrectCount > 0 ? correctPct : answeredPct }}
         >
           <div className="absolute top-[4px] left-[8px] right-[8px] h-[4px] bg-white/30 rounded-full" />

@@ -16,7 +16,7 @@ export interface QuizMeta {
 export const QUIZ_META: QuizMeta = {
   title: "Cell Biology",
   subject: "Biology",
-  totalMarks: 8,
+  totalMarks: 7,
   xpReward: 50,
 }
 
@@ -79,6 +79,6 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
       "Transporting proteins",
     ],
     correctIndices: [1],
-    marks: 2,
+    marks: 1,
   },
 ]
