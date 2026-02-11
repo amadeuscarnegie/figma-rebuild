@@ -4,7 +4,8 @@ import flameIcon from "@/assets/images/icons/Cognito icons.svg"
 import { ChevronDown, Search, Zap } from "lucide-react"
 import { useClickOutside } from "@/hooks/useClickOutside"
 import Modal from "@/components/ui/Modal"
-import { COURSES, ACCOUNT_MENU_ITEMS, USER, CURRENT_STREAK_DAYS } from "@/data/constants"
+import { USER, COURSES, ACCOUNT_MENU_ITEMS } from "@/data/user"
+import { CURRENT_STREAK_DAYS } from "@/data/gamification"
 
 export default memo(function Navbar() {
   const [coursesOpen, setCoursesOpen] = useState(false)

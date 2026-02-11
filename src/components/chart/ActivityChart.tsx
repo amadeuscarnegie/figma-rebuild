@@ -1,14 +1,14 @@
-import { memo, useState, useRef, useMemo, useCallback, useEffect } from "react"
+import { memo, useState, useRef, useMemo } from "react"
 import { ChevronDown } from "lucide-react"
 import { useClickOutside } from "@/hooks/useClickOutside"
-import { TIME_PERIODS, CHART_DATA, type TimePeriod } from "@/data/constants"
+import { useIsMobile } from "@/hooks/useIsMobile"
+import { TIME_PERIODS, CHART_DATA, type TimePeriod } from "@/data/activity"
 
 const Y_LABELS = ["1,000", "800", "600", "400", "200", "0"]
 const CHART_WIDTH = 684
 const CHART_HEIGHT = 184
 const PADDING_LEFT = 40
 const PADDING_RIGHT = 10
-const MOBILE_BREAKPOINT = 640
 const MOBILE_FONT_SIZE = 15
 const DESKTOP_FONT_SIZE = 11
 
@@ -16,20 +16,11 @@ export default memo(function ActivityChart() {
   const [period, setPeriod] = useState<TimePeriod>("All time")
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    check()
-    window.addEventListener("resize", check)
-    return () => window.removeEventListener("resize", check)
-  }, [])
+  const isMobile = useIsMobile()
 
   const fontSize = isMobile ? MOBILE_FONT_SIZE : DESKTOP_FONT_SIZE
 
   useClickOutside(dropdownRef, () => setDropdownOpen(false))
-
-  const toggleDropdown = useCallback(() => setDropdownOpen(prev => !prev), [])
 
   const data = CHART_DATA[period]
 
@@ -70,7 +61,7 @@ export default memo(function ActivityChart() {
         <h3 className="font-bold text-[18px] text-text-primary leading-normal">Activity XP history</h3>
         <div ref={dropdownRef} className="relative" onKeyDown={handleDropdownKeyDown}>
           <button
-            onClick={toggleDropdown}
+            onClick={() => setDropdownOpen(prev => !prev)}
             aria-expanded={dropdownOpen}
             aria-haspopup="true"
             className="flex items-center gap-[8px] border border-grey-300 rounded-[8px] px-[14px] h-[40px] cursor-pointer"

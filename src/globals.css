@@ -19,7 +19,10 @@
   /* Colors: amber / streak */
   --color-amber-50: #fff7e9;
   --color-amber-100: #ffefd3;
+  --color-amber-200: #fedfa7;
   --color-amber-600: #ca8d1b;
+  --color-amber-700: #b8860b;
+  --color-amber-bg: #fef6e0;
 
   /* Colors: purple */
   --color-purple-primary: #8d22cc;
@@ -43,11 +46,68 @@
 
   /* Colors: semantic feedback */
   --color-success: #12b76a;
+  --color-success-light: #ecfdf3;
   --color-destructive: #d92d20;
+  --color-destructive-dark: #991b1b;
+  --color-destructive-text: #C0362D;
+  --color-destructive-hover: #a82e26;
   --color-destructive-bg: #fef3f2;
+
+  /* Colors: overlay */
+  --color-overlay: #101828;
+
+  /* Colors: leaderboard */
+  --color-leaderboard-you-bg: #edf7fe;
+  --color-leaderboard-you-text: #224f70;
+  --color-leaderboard-you-badge: #ecf7ff;
 
   /* Border */
   --color-border: #eaecf0;
+
+  /* Colors: MCQ option states */
+  --color-mcq-default-bg: #fcfcfd;
+  --color-mcq-default-border: #eaecf0;
+  --color-mcq-default-text: #344054;
+  --color-mcq-hover-bg: #f2f4f7;
+  --color-mcq-hover-border: #d0d5dd;
+  --color-mcq-selected-bg: #ecf7ff;
+  --color-mcq-selected-border: #48abf6;
+  --color-mcq-selected-text: #1578c3;
+  --color-mcq-correct-bg: #ddf7ee;
+  --color-mcq-correct-border: #75dfbb;
+  --color-mcq-correct-text: #42ac88;
+  --color-mcq-incorrect-bg: #fbe7f2;
+  --color-mcq-incorrect-border: #e7819a;
+  --color-mcq-incorrect-text: #b44e67;
+  --color-mcq-answer-bg: #fcfcfd;
+  --color-mcq-answer-border: #75dfbb;
+  --color-mcq-answer-text: #42ac88;
+  --color-mcq-disabled-text: #98a2b3;
+
+  /* Colors: footer feedback */
+  --color-feedback-correct-bg: #98e7cc;
+  --color-feedback-correct-text: #112b22;
+  --color-feedback-partial-bg: #fed07a;
+  --color-feedback-partial-text: #332307;
+  --color-feedback-incorrect-bg: #eda0b3;
+  --color-feedback-incorrect-text: #2d131a;
+
+  /* Colors: progress bar segments */
+  --color-progress-correct: #53d7aa;
+  --color-progress-incorrect: #e16181;
+  --color-progress-track: #eaecf0;
+
+  /* Colors: end scene summary */
+  --color-summary-correct-bg: #eefbf6;
+  --color-summary-correct-border: #75dfbb;
+  --color-summary-incorrect-bg: #fceff7;
+  --color-summary-incorrect-border: #e7819a;
+  --color-summary-correct-value: #42ac88;
+  --color-summary-incorrect-value: #b44e67;
+
+  /* Colors: redo badge */
+  --color-badge-danger-bg: #fdeceb;
+  --color-badge-danger-text: #c0362d;
 }
 
 *,
@@ -68,6 +128,15 @@ body {
   }
   body {
     @apply bg-background text-text-primary;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
   }
 }
 

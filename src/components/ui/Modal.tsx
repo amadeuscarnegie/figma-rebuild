@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react"
+import { useRef } from "react"
 import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useFocusTrap } from "@/hooks/useFocusTrap"
@@ -26,9 +26,8 @@ export default function Modal({
   showClose = true,
 }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null)
-  const stableOnClose = useCallback(() => onClose(), [onClose])
 
-  useFocusTrap(panelRef, open, stableOnClose)
+  useFocusTrap(panelRef, open, onClose)
 
   if (!open) return null
 
@@ -42,7 +41,7 @@ export default function Modal({
       aria-modal="true"
       aria-label={label}
     >
-      <div className="absolute inset-0 bg-[#101828]/50" onClick={onClose} />
+      <div className="absolute inset-0 bg-overlay/50" onClick={onClose} />
       <div
         ref={panelRef}
         className={cn(

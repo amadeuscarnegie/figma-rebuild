@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Pixel-perfect rebuild of a Cognito education platform account page from a Figma design. This is a static, single-page React app — no routing, no backend, no state management library. All mock data lives in `src/data/constants.ts`.
+Pixel-perfect rebuild of a Cognito education platform account page from a Figma design. This is a static, single-page React app — no routing, no backend, no state management library. Mock data is split across domain files in `src/data/` (user.ts, gamification.ts, activity.ts).
 
 ## Commands
 
@@ -29,16 +29,21 @@ Pixel-perfect rebuild of a Cognito education platform account page from a Figma 
 src/
 ├── pages/           # Page-level layout (AccountPage)
 ├── components/
+│   ├── achievements/# Achievement cards grid with expand/collapse
 │   ├── chart/       # Custom SVG line chart with bezier curves
+│   ├── leaderboard/ # Ranked leaderboard with award zone
 │   ├── navbar/      # Top navigation with dropdowns and modals
 │   ├── profile/     # User profile header
+│   ├── settings/    # Settings cards (ProfileDetails, Preferences, ChangePassword, DeleteAccount)
 │   ├── stats/       # LevelCard + StatCard components
 │   ├── streak/      # Streak calendar with flame icons
 │   ├── tabs/        # Tab navigation with sliding indicator
-│   └── ui/          # Shared primitives (Modal)
-├── hooks/           # useClickOutside, useFocusTrap
-├── data/            # Centralized mock data constants
-├── lib/utils.ts     # cn() helper (clsx + tailwind-merge)
+│   └── ui/          # Shared primitives (Modal, Toggle, ActionButton, SettingsInput, SettingsSelect)
+├── hooks/           # useClickOutside, useFocusTrap, useIsMobile
+├── data/            # Mock data split by domain (user.ts, gamification.ts, activity.ts)
+├── lib/
+│   ├── utils.ts     # cn() helper (clsx + tailwind-merge)
+│   └── avatarMap.ts # Shared avatar SVG imports + AVATAR_MAP
 ├── assets/images/   # SVGs and PNGs from Figma export
 └── globals.css      # Tailwind config + design tokens
 ```
@@ -54,9 +59,9 @@ src/
 
 ## Performance Patterns
 
-- Components use `React.memo` to prevent unnecessary re-renders (e.g., Navbar and ProfileHeader don't re-render on tab changes)
-- SVG path computations are memoized with `useMemo`
-- Event handlers use `useCallback` with functional state updates for stable references
+- `React.memo` on tab-level components (Settings, Leaderboard, etc.) — prevents re-renders on tab switches
+- `useMemo` only for expensive computations (SVG bezier path calculations in ActivityChart)
+- `useCallback` only when genuinely needed (e.g., TabGroup's `updateIndicator` used as effect dependency and event listener). Do NOT blanket-wrap handlers passed to native elements or non-memoized children.
 - State is colocated — calendar navigation only re-renders the calendar, not sibling components
 
 ## Testing

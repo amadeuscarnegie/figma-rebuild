@@ -1,8 +1,7 @@
-import { memo, useState, useCallback } from "react"
+import { memo, useState } from "react"
 import flameIcon from "@/assets/images/icons/Cognito icons.svg"
-import { Calendar, ChevronLeft, ChevronRight, CheckCircle } from "lucide-react"
-import Modal from "@/components/ui/Modal"
-import { STREAK_DATES, CURRENT_STREAK_DAYS } from "@/data/constants"
+import { Calendar, ChevronLeft, ChevronRight } from "lucide-react"
+import { STREAK_DATES, CURRENT_STREAK_DAYS } from "@/data/gamification"
 
 const DAYS_OF_WEEK = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
 
@@ -114,30 +113,30 @@ const WeekRow = memo(function WeekRow({ days, startDate, weekOffset }: WeekRowPr
   return <div className="grid grid-cols-7">{cells}</div>
 })
 
-export default memo(function StreakCalendar() {
+interface StreakCalendarProps {
+  onStartActivity?: () => void
+}
+
+export default memo(function StreakCalendar({ onStartActivity }: StreakCalendarProps) {
   const [startDate, setStartDate] = useState(() => getStartOfWeek(new Date(2026, 0, 12)))
-  const [modalOpen, setModalOpen] = useState(false)
 
   const weeks = getWeeksForRange(startDate)
 
-  const goBack = useCallback(() => {
+  function goBack() {
     setStartDate(prev => {
       const d = new Date(prev)
       d.setDate(d.getDate() - 14)
       return d
     })
-  }, [])
+  }
 
-  const goForward = useCallback(() => {
+  function goForward() {
     setStartDate(prev => {
       const d = new Date(prev)
       d.setDate(d.getDate() + 14)
       return d
     })
-  }, [])
-
-  const openModal = useCallback(() => setModalOpen(true), [])
-  const closeModal = useCallback(() => setModalOpen(false), [])
+  }
 
   return (
     <>
@@ -190,23 +189,13 @@ export default memo(function StreakCalendar() {
 
         {/* Continue streak button - full width */}
         <button
-          onClick={openModal}
+          type="button"
+          onClick={onStartActivity}
           className="bg-grey-600 hover:bg-grey-800 text-white font-bold text-[16px] rounded-[10px] h-[48px] px-[20px] w-full leading-normal shadow-[0px_4px_0px_0px_var(--color-grey-900)] cursor-pointer transition-all duration-100 active:translate-y-[4px] active:shadow-none"
         >
           Continue streak
         </button>
       </div>
-
-      <Modal
-        open={modalOpen}
-        onClose={closeModal}
-        label="Activity completed"
-        className="w-[400px] p-[32px] text-center"
-      >
-        <CheckCircle className="w-[48px] h-[48px] text-success mx-auto mb-[16px]" />
-        <h2 className="font-bold text-[20px] text-heading mb-[8px]">Activity Complete!</h2>
-        <p className="text-[16px] text-text-muted">Great work! You've continued your streak for today.</p>
-      </Modal>
     </>
   )
 })

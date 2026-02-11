@@ -2,7 +2,7 @@ import { memo, useState } from "react"
 import avatarImg from "@/assets/images/icons/Avatar_Scuba_V2_SVG.svg"
 import { Pencil } from "lucide-react"
 import Modal from "@/components/ui/Modal"
-import { USER } from "@/data/constants"
+import { USER } from "@/data/user"
 
 export default memo(function ProfileHeader() {
   const [modalOpen, setModalOpen] = useState(false)

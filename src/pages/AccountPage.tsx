@@ -9,7 +9,8 @@ import ActivityChart from "@/components/chart/ActivityChart"
 import Leaderboard from "@/components/leaderboard/Leaderboard"
 import Settings from "@/components/settings/Settings"
 import Achievements from "@/components/achievements/Achievements"
-import { STATS } from "@/data/constants"
+import QuizActivity from "@/components/quiz/QuizActivity"
+import { STATS } from "@/data/gamification"
 
 function EmptyTabContent({ tab }: { tab: TabName }) {
   return (
@@ -20,8 +21,15 @@ function EmptyTabContent({ tab }: { tab: TabName }) {
   )
 }
 
+type View = "account" | "activity"
+
 export default function AccountPage() {
   const [activeTab, setActiveTab] = useState<TabName>("Overview")
+  const [view, setView] = useState<View>("account")
+
+  if (view === "activity") {
+    return <QuizActivity onClose={() => setView("account")} />
+  }
 
   return (
     <div className="bg-white min-h-screen">
@@ -45,7 +53,7 @@ export default function AccountPage() {
               {/* Top row: Streak Calendar + Level/Stats */}
               <div className="flex flex-col lg:flex-row gap-[16px] sm:gap-[24px]">
                 {/* Left: Streak Calendar */}
-                <StreakCalendar />
+                <StreakCalendar onStartActivity={() => setView("activity")} />
 
                 {/* Right: Level card + Stat cards */}
                 <div className="flex flex-col gap-[12px] sm:gap-[16px] flex-1 min-w-0">

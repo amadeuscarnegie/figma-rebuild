@@ -1,18 +1,8 @@
-import { memo, useState, useCallback } from "react"
+import { memo, useState } from "react"
 import { CircleCheck, Lock, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { ACHIEVEMENTS_DATA, type Achievement } from "@/data/constants"
-import avatarScuba from "@/assets/images/icons/Avatar_Scuba_V2_SVG.svg"
-import avatarHeadphones from "@/assets/images/icons/Avatar_Headphones_V2_SVG.svg"
-import avatarSherlock from "@/assets/images/icons/Avatar_Sherlock_V2_SVG.svg"
-import avatarVillain from "@/assets/images/icons/Avatar_Villain_V2_SVG.svg"
-
-const AVATAR_MAP: Record<Achievement["avatarKey"], string> = {
-  scuba: avatarScuba,
-  headphones: avatarHeadphones,
-  sherlock: avatarSherlock,
-  villain: avatarVillain,
-}
+import { ACHIEVEMENTS_DATA, type Achievement } from "@/data/gamification"
+import { AVATAR_MAP } from "@/lib/avatarMap"
 
 function AchievementCard({ achievement }: { achievement: Achievement }) {
   const { name, description, xp, avatarKey, unlocked } = achievement
@@ -22,14 +12,14 @@ function AchievementCard({ achievement }: { achievement: Achievement }) {
       className={cn(
         "relative flex flex-col items-center rounded-[12px] border-[1.5px] p-[17px] pt-[17px] pb-[25px]",
         unlocked
-          ? "border-[#fedfa7] bg-white"
+          ? "border-amber-200 bg-white"
           : "border-border bg-grey-50"
       )}
     >
       {/* Status icon - top left */}
       <div className="absolute top-[17px] left-[17px]">
         {unlocked ? (
-          <div className="w-[28px] h-[28px] rounded-full bg-[#ecfdf3] flex items-center justify-center">
+          <div className="w-[28px] h-[28px] rounded-full bg-success-light flex items-center justify-center">
             <CircleCheck className="w-[16px] h-[16px] text-success" />
           </div>
         ) : (
@@ -99,7 +89,7 @@ const INITIAL_COUNT = 9
 
 export default memo(function Achievements() {
   const [expanded, setExpanded] = useState(false)
-  const toggleExpanded = useCallback(() => setExpanded((v) => !v), [])
+  const toggleExpanded = () => setExpanded((v) => !v)
 
   const unlockedCount = ACHIEVEMENTS_DATA.filter((a) => a.unlocked).length
   const totalCount = ACHIEVEMENTS_DATA.length

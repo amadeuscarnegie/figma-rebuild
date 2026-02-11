@@ -1,20 +1,10 @@
-import { memo, useState, useCallback } from "react"
+import { memo, useState } from "react"
 import { Trophy, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { LEADERBOARD_DATA, LEADERBOARD_RESET_TIME, type LeaderboardEntry } from "@/data/constants"
+import { LEADERBOARD_DATA, LEADERBOARD_RESET_TIME, type LeaderboardEntry } from "@/data/gamification"
+import { AVATAR_MAP } from "@/lib/avatarMap"
 import firstPlaceIcon from "@/assets/images/icons/1st place.svg"
 import secondPlaceIcon from "@/assets/images/icons/2nd place.svg"
-import avatarScuba from "@/assets/images/icons/Avatar_Scuba_V2_SVG.svg"
-import avatarHeadphones from "@/assets/images/icons/Avatar_Headphones_V2_SVG.svg"
-import avatarSherlock from "@/assets/images/icons/Avatar_Sherlock_V2_SVG.svg"
-import avatarVillain from "@/assets/images/icons/Avatar_Villain_V2_SVG.svg"
-
-const AVATAR_MAP: Record<LeaderboardEntry["avatarKey"], string> = {
-  scuba: avatarScuba,
-  headphones: avatarHeadphones,
-  sherlock: avatarSherlock,
-  villain: avatarVillain,
-}
 
 const COLLAPSED_RANKS = new Set([1, 2, 6, 7, 8, 9, 10])
 
@@ -65,7 +55,7 @@ function RegularEntry({ entry, isFirst, isLast }: { entry: LeaderboardEntry; isF
         "flex items-center gap-[8px] sm:gap-[12px] px-[8px] sm:px-[16px] py-[6px]",
         isFaded && "opacity-70",
         isLast && "border-t border-grey-100 pt-[10px]",
-        entry.isYou && "bg-[#edf7fe] rounded-[12px] opacity-100 py-[8px]"
+        entry.isYou && "bg-leaderboard-you-bg rounded-[12px] opacity-100 py-[8px]"
       )}
     >
       <span
@@ -81,13 +71,13 @@ function RegularEntry({ entry, isFirst, isLast }: { entry: LeaderboardEntry; isF
         <span
           className={cn(
             "font-bold text-[14px] leading-normal truncate",
-            entry.isYou ? "text-[#224f70]" : "text-text-secondary"
+            entry.isYou ? "text-leaderboard-you-text" : "text-text-secondary"
           )}
         >
           {entry.name}
         </span>
         {entry.isYou && (
-          <span className="hidden sm:flex bg-[#ecf7ff] rounded-full px-[12px] h-[28px] items-center text-blue-600 font-semibold text-[14px] leading-normal shrink-0">
+          <span className="hidden sm:flex bg-leaderboard-you-badge rounded-full px-[12px] h-[28px] items-center text-blue-600 font-semibold text-[14px] leading-normal shrink-0">
             You
           </span>
         )}
@@ -125,7 +115,7 @@ export default memo(function Leaderboard() {
   const regularEntries = expanded ? allRegular : collapsedRegular
   const showSkippedIndicator = !expanded && awardEntries.length > 0 && collapsedRegular.length > 0 && collapsedRegular[0].rank > awardEntries[awardEntries.length - 1].rank + 1
 
-  const toggleExpanded = useCallback(() => setExpanded((v) => !v), [])
+  const toggleExpanded = () => setExpanded((v) => !v)
 
   return (
     <div className="max-w-[768px] w-full mx-auto px-[16px] sm:px-[24px] lg:px-0 pt-[16px] sm:pt-[24px] pb-[48px]">
@@ -142,11 +132,11 @@ export default memo(function Leaderboard() {
         </div>
 
         {/* Award zone section */}
-        <div className="relative border-[1.5px] border-[#fedfa7] rounded-[12px] bg-white">
+        <div className="relative border-[1.5px] border-amber-200 rounded-[12px] bg-white">
           {/* Award zone badge - centered on top edge */}
-          <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#fef6e0] rounded-full px-[12px] h-[28px] flex items-center gap-[6px] z-10">
-            <Trophy className="w-[14px] h-[14px] text-[#b8860b]" />
-            <span className="text-[14px] font-semibold text-[#b8860b] leading-normal whitespace-nowrap">
+          <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 bg-amber-bg rounded-full px-[12px] h-[28px] flex items-center gap-[6px] z-10">
+            <Trophy className="w-[14px] h-[14px] text-amber-700" />
+            <span className="text-[14px] font-semibold text-amber-700 leading-normal whitespace-nowrap">
               Award zone
             </span>
           </div>

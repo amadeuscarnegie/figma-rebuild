@@ -1,5 +1,5 @@
 import badgeIcon from "@/assets/images/icons/Notification Icon.svg"
-import { LEVEL } from "@/data/constants"
+import { LEVEL } from "@/data/gamification"
 
 const progressPct = Math.round((LEVEL.xp / LEVEL.xpRequired) * 100)
 
