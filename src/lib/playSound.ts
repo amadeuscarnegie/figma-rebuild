@@ -2,7 +2,23 @@ let ctx: AudioContext | null = null
 const buffers = new Map<string, AudioBuffer>()
 
 function getContext(): AudioContext {
-  if (!ctx) ctx = new AudioContext()
+  if (!ctx) {
+    ctx = new AudioContext()
+
+    // On mobile, AudioContext starts suspended and needs a user gesture to resume.
+    // Register a one-time listener on the first touch/click to unlock it.
+    const unlock = () => {
+      if (ctx && ctx.state === "suspended") {
+        ctx.resume()
+      }
+      document.removeEventListener("touchstart", unlock)
+      document.removeEventListener("touchend", unlock)
+      document.removeEventListener("click", unlock)
+    }
+    document.addEventListener("touchstart", unlock, { once: true })
+    document.addEventListener("touchend", unlock, { once: true })
+    document.addEventListener("click", unlock, { once: true })
+  }
   return ctx
 }
 

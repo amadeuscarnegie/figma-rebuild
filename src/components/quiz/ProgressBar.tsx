@@ -47,8 +47,8 @@ export default function ProgressBar({
       {incorrectCount > 0 && (
         <div
           className={cn(
-            "absolute inset-y-0 left-0 bg-progress-incorrect rounded-full z-[1] overflow-hidden",
-            isAnimating && "transition-[width] duration-[3000ms] ease-linear",
+            "absolute inset-y-0 left-0 bg-progress-incorrect rounded-full z-[1] overflow-hidden transition-[width]",
+            isAnimating ? "duration-[3000ms] ease-linear" : "duration-300 ease-out",
           )}
           style={{ width: answeredPct }}
         >
@@ -60,8 +60,8 @@ export default function ProgressBar({
       {correctCount > 0 && (
         <div
           className={cn(
-            "absolute inset-y-0 left-0 bg-progress-correct rounded-full z-[2] overflow-hidden",
-            isAnimating && "transition-[width] duration-[3000ms] ease-linear",
+            "absolute inset-y-0 left-0 bg-progress-correct rounded-full z-[2] overflow-hidden transition-[width]",
+            isAnimating ? "duration-[3000ms] ease-linear" : "duration-300 ease-out",
           )}
           style={{ width: incorrectCount > 0 ? correctPct : answeredPct }}
         >
