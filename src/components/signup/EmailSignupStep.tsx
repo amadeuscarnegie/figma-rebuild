@@ -12,14 +12,19 @@ const PASSWORD_REQUIREMENTS = [
 ]
 
 export default function EmailSignupStep({ onNext }: SignupStepProps) {
-  const [name, setName] = useState("")
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
   const allRequirementsMet = PASSWORD_REQUIREMENTS.every((req) =>
     req.test(password)
   )
-  const isValid = name.trim() !== "" && email.trim() !== "" && allRequirementsMet
+  const isValid =
+    firstName.trim() !== "" &&
+    lastName.trim() !== "" &&
+    email.trim() !== "" &&
+    allRequirementsMet
 
   return (
     <div className="w-full max-w-[400px] mx-auto px-[24px]">
@@ -28,7 +33,10 @@ export default function EmailSignupStep({ onNext }: SignupStepProps) {
       </h1>
 
       <div className="flex flex-col gap-[16px]">
-        <SettingsInput label="Full Name" value={name} onChange={setName} />
+        <div className="grid grid-cols-2 gap-[12px]">
+          <SettingsInput label="First name" value={firstName} onChange={setFirstName} />
+          <SettingsInput label="Last name" value={lastName} onChange={setLastName} />
+        </div>
         <SettingsInput label="Email" value={email} onChange={setEmail} />
         <SettingsInput
           label="Password"
