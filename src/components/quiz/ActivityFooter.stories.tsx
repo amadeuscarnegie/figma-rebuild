@@ -12,44 +12,47 @@ export default meta
 
 type Story = StoryObj<typeof ActivityFooter>
 
+const onCheckFn = fn()
+const onContinueFn = fn()
+
 export const QuestionDisabled: Story = {
   args: {
-    mode: "question" as const,
+    mode: "question",
     marks: 1,
     canCheck: false,
-    onCheck: fn(),
+    onCheck: onCheckFn,
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const button = canvas.getByRole("button", { name: "Check" })
     await expect(button).toBeDisabled()
     await userEvent.click(button)
-    await expect(args.onCheck).not.toHaveBeenCalled()
+    await expect(onCheckFn).not.toHaveBeenCalled()
   },
 }
 
 export const QuestionReady: Story = {
   args: {
-    mode: "question" as const,
+    mode: "question",
     marks: 1,
     canCheck: true,
-    onCheck: fn(),
+    onCheck: onCheckFn,
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const button = canvas.getByRole("button", { name: "Check" })
     await expect(button).toBeEnabled()
     await userEvent.click(button)
-    await expect(args.onCheck).toHaveBeenCalledTimes(1)
+    await expect(onCheckFn).toHaveBeenCalledTimes(1)
   },
 }
 
 export const QuestionMultiSelect: Story = {
   args: {
-    mode: "question" as const,
+    mode: "question",
     marks: 2,
     canCheck: false,
-    onCheck: fn(),
+    onCheck: onCheckFn,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -59,30 +62,30 @@ export const QuestionMultiSelect: Story = {
 
 export const FeedbackCorrect: Story = {
   args: {
-    mode: "feedback" as const,
-    feedbackType: "correct" as const,
-    onContinue: fn(),
+    mode: "feedback",
+    feedbackType: "correct",
+    onContinue: onContinueFn,
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const button = canvas.getByRole("button", { name: "Continue" })
     await userEvent.click(button)
-    await expect(args.onContinue).toHaveBeenCalledTimes(1)
+    await expect(onContinueFn).toHaveBeenCalledTimes(1)
   },
 }
 
 export const FeedbackPartial: Story = {
   args: {
-    mode: "feedback" as const,
-    feedbackType: "partial" as const,
-    onContinue: fn(),
+    mode: "feedback",
+    feedbackType: "partial",
+    onContinue: onContinueFn,
   },
 }
 
 export const FeedbackIncorrect: Story = {
   args: {
-    mode: "feedback" as const,
-    feedbackType: "incorrect" as const,
-    onContinue: fn(),
+    mode: "feedback",
+    feedbackType: "incorrect",
+    onContinue: onContinueFn,
   },
 }
