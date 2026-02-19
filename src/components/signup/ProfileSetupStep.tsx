@@ -38,7 +38,7 @@ export default function ProfileSetupStep({ onNext }: SignupStepProps) {
       ).slice(0, 5)
     : []
 
-  const hasSchool = selectedSchool !== null || cantFind
+  const hasSchool = selectedSchool !== null || (cantFind && schoolQuery.trim().length > 0)
 
   function handleSelectSchool(school: string) {
     setSelectedSchool(school)
@@ -51,6 +51,7 @@ export default function ProfileSetupStep({ onNext }: SignupStepProps) {
     setCantFind(true)
     setSelectedSchool(null)
     setShowDropdown(false)
+    // Keep their typed query so they can submit it as a free-text school name
   }
 
   function handleClearSchool() {
@@ -113,10 +114,15 @@ export default function ProfileSetupStep({ onNext }: SignupStepProps) {
             )}>
               <Search className="w-[18px] h-[18px] text-text-muted shrink-0" />
               {cantFind ? (
-                <div className="flex-1 flex items-center justify-between min-w-0">
-                  <span className="font-semibold text-[16px] text-text-muted truncate">
-                    School not listed
-                  </span>
+                <div className="flex-1 flex items-center justify-between min-w-0 gap-[8px]">
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={schoolQuery}
+                    onChange={(e) => setSchoolQuery(e.target.value)}
+                    placeholder="Type your school name..."
+                    className="flex-1 font-semibold text-[16px] text-text-primary leading-normal bg-transparent outline-none min-w-0 placeholder:text-text-muted placeholder:font-normal"
+                  />
                   <button
                     type="button"
                     onClick={handleClearSchool}
@@ -185,7 +191,11 @@ export default function ProfileSetupStep({ onNext }: SignupStepProps) {
               </div>
             )}
           </div>
-          {!hasSchool && (
+          {cantFind ? (
+            <p className="text-[13px] text-text-muted">
+              Just type your school name and we'll match it up
+            </p>
+          ) : !hasSchool && (
             <p className="text-[13px] text-text-muted">
               Start typing to search for your school
             </p>

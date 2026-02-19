@@ -56,15 +56,6 @@ export default function FreeTrialStep({ onNext }: SignupStepProps) {
           Start 7-day free trial
         </ActionButton>
       </div>
-
-      {/* Skip option */}
-      <button
-        type="button"
-        onClick={onNext}
-        className="mt-[16px] text-[14px] text-text-muted cursor-pointer hover:text-text-secondary transition-colors"
-      >
-        Skip for now — continue with Free
-      </button>
     </div>
   )
 }
