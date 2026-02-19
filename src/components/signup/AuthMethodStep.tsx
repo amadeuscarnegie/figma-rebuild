@@ -1,9 +1,50 @@
 import { Mail } from "lucide-react"
 import type { SignupStepProps } from "@/components/signup/SignupFlow"
 
+const FONT_OPTIONS = [
+  { name: "Plus Jakarta Sans", family: "'Plus Jakarta Sans', sans-serif" },
+  { name: "Sora", family: "'Sora', sans-serif" },
+  { name: "DM Sans", family: "'DM Sans', sans-serif" },
+]
+
 export default function AuthMethodStep({ onNext }: SignupStepProps) {
   return (
     <div className="w-full max-w-[400px] mx-auto px-[24px]">
+      {/* Font comparison preview */}
+      <div className="mb-[32px] border border-grey-200 rounded-[12px] p-[20px] bg-grey-50">
+        <p className="text-[12px] font-semibold text-text-muted uppercase tracking-wide mb-[16px]">
+          Font options for titles
+        </p>
+        <div className="flex flex-col gap-[20px]">
+          {FONT_OPTIONS.map(({ name, family }) => (
+            <div key={name}>
+              <p className="text-[11px] text-text-muted mb-[4px]">{name}</p>
+              <h2
+                className="font-bold text-[24px] text-heading"
+                style={{ fontFamily: family }}
+              >
+                Create your account
+              </h2>
+              <p
+                className="font-bold text-[20px] text-heading mt-[2px]"
+                style={{ fontFamily: family }}
+              >
+                Tell us about yourself
+              </p>
+            </div>
+          ))}
+          <div>
+            <p className="text-[11px] text-text-muted mb-[4px]">Nunito (current)</p>
+            <h2 className="font-bold text-[24px] text-heading">
+              Create your account
+            </h2>
+            <p className="font-bold text-[20px] text-heading mt-[2px]">
+              Tell us about yourself
+            </p>
+          </div>
+        </div>
+      </div>
+
       <h1 className="font-bold text-[24px] text-heading text-center mb-[8px]">
         Create your account
       </h1>
