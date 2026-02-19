@@ -10,6 +10,7 @@ import Leaderboard from "@/components/leaderboard/Leaderboard"
 import Settings from "@/components/settings/Settings"
 import Achievements from "@/components/achievements/Achievements"
 import QuizActivity from "@/components/quiz/QuizActivity"
+import SignupFlow from "@/components/signup/SignupFlow"
 import { STATS } from "@/data/gamification"
 
 function EmptyTabContent({ tab }: { tab: TabName }) {
@@ -21,11 +22,15 @@ function EmptyTabContent({ tab }: { tab: TabName }) {
   )
 }
 
-type View = "account" | "activity"
+type View = "account" | "activity" | "signup"
 
 export default function AccountPage() {
   const [activeTab, setActiveTab] = useState<TabName>("Overview")
   const [view, setView] = useState<View>("account")
+
+  if (view === "signup") {
+    return <SignupFlow onClose={() => setView("account")} />
+  }
 
   if (view === "activity") {
     return <QuizActivity onClose={() => setView("account")} />
@@ -34,7 +39,7 @@ export default function AccountPage() {
   return (
     <div className="bg-white min-h-screen">
       {/* Full-width sections */}
-      <Navbar />
+      <Navbar onSignUp={() => setView("signup")} />
       <ProfileHeader />
 
       {/* Constrained content area */}

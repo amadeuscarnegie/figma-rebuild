@@ -7,7 +7,7 @@ import Modal from "@/components/ui/Modal"
 import { USER, COURSES, ACCOUNT_MENU_ITEMS } from "@/data/user"
 import { CURRENT_STREAK_DAYS } from "@/data/gamification"
 
-export default memo(function Navbar() {
+export default memo(function Navbar({ onSignUp }: { onSignUp?: () => void }) {
   const [coursesOpen, setCoursesOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
@@ -66,6 +66,11 @@ export default memo(function Navbar() {
 
         {/* Right section */}
         <div className="flex items-center gap-[12px] sm:gap-[24px]">
+          {onSignUp && (
+            <button onClick={onSignUp} className="font-bold text-[16px] text-blue-600 cursor-pointer hover:text-blue-700">
+              Sign Up
+            </button>
+          )}
           <div className="flex items-center gap-[2px] bg-amber-50 rounded-full pl-[4px] pr-[4px] sm:pr-[10px] py-[3px] cursor-pointer" role="status" aria-label={`Current streak: ${CURRENT_STREAK_DAYS} days`}>
             <img src={flameIcon} alt="" className="w-[28px] h-[28px]" />
             <span className="hidden sm:inline font-bold text-[16px] text-amber-600">{CURRENT_STREAK_DAYS} days</span>
